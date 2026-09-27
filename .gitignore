@@ -1,0 +1,30 @@
+# Node
+node_modules/
+.npm/
+.pnpm-store/
+
+# SvelteKit
+console/.svelte-kit/
+console/build/
+console/.vercel/
+console/.output/
+
+# Env / secrets
+.env
+*.local
+
+# PocketBase data
+pb_data/
+pb_migrations/*.local.js
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

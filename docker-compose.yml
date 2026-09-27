@@ -1,0 +1,102 @@
+# Self-hosted multi-tenant RBAC platform.
+#   postgres    -> OpenFGA datastore
+#   openfga     -> authorization engine (per-tenant = store)
+#   pocketbase  -> admin console authentication
+#   console     -> SvelteKit admin console (UI + server)
+#
+# Bring up the backing services first:
+#   docker compose up -d postgres openfga pocketbase
+# Then seed + run the console, or build everything:
+#   docker compose up -d --build
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-openfga}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-openfga}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-openfga} -d ${POSTGRES_DB:-openfga}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # One-shot: create/upgrade the OpenFGA schema in Postgres, then exit.
+  openfga-migrate:
+    image: openfga/openfga:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: migrate
+    environment:
+      OPENFGA_DATASTORE_ENGINE: postgres
+      OPENFGA_DATASTORE_URI: postgres://${POSTGRES_USER:-openfga}:${POSTGRES_PASSWORD:-change-me-postgres}@postgres:5432/${POSTGRES_DB:-openfga}?sslmode=disable
+    restart: "no"
+
+  openfga:
+    image: openfga/openfga:latest
+    depends_on:
+      openfga-migrate:
+        condition: service_completed_successfully
+    command: run
+    environment:
+      OPENFGA_DATASTORE_ENGINE: postgres
+      OPENFGA_DATASTORE_URI: postgres://${POSTGRES_USER:-openfga}:${POSTGRES_PASSWORD:-change-me-postgres}@postgres:5432/${POSTGRES_DB:-openfga}?sslmode=disable
+      OPENFGA_LOG_FORMAT: json
+      # Auth for the HTTP/gRPC API. Demo default = none.
+      # For a preshared key, set: OPENFGA_AUTHN_METHOD=preshared and the keys below.
+      OPENFGA_AUTHN_METHOD: ${OPENFGA_AUTHN_METHOD:-none}
+      OPENFGA_AUTHN_PRESHARED_KEYS: ${OPENFGA_PRESHARED_KEYS:-}
+      OPENFGA_PLAYGROUND_ENABLED: "true"
+    ports:
+      - "8080:8080"   # HTTP API  (console + clients call this)
+      - "8081:8081"   # gRPC API
+      - "3000:3000"   # Playground UI (http://localhost:3000/playground)
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=:8081"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  pocketbase:
+    image: ghcr.io/muchobien/pocketbase:latest
+    restart: unless-stopped
+    command:
+      - --http=0.0.0.0:8090
+    volumes:
+      - pocketbase_data:/pb_data
+    ports:
+      - "8090:8090"   # Admin UI at http://localhost:8090/_/  (create first superuser)
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8090/api/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  console:
+    build:
+      context: ./console
+      dockerfile: Dockerfile
+    depends_on:
+      openfga:
+        condition: service_healthy
+      pocketbase:
+        condition: service_healthy
+    environment:
+      OPENFGA_API_URL: ${OPENFGA_API_URL:-http://openfga:8080}
+      OPENFGA_API_TOKEN: ${OPENFGA_API_TOKEN:-}
+      POCKETBASE_URL: ${POCKETBASE_URL:-http://pocketbase:8090}
+      CONSOLE_SESSION_SECRET: ${CONSOLE_SESSION_SECRET:-change-me-session-secret}
+      NODE_ENV: production
+      PORT: "3000"
+    ports:
+      - "5173:3000"   # console UI at http://localhost:5173
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  pocketbase_data:
