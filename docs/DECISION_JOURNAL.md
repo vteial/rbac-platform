@@ -7,8 +7,11 @@
 
 - **Status:** Design + starter implementation complete; live end-to-end run pending (see §6)
 - **Date:** 2026-09-27
-- **Authors:** Product owner (problem + constraints) · engineering (options + design)
-- **Related artifacts:** [`README.md`](../README.md) · [`docs/DEMO.md`](./DEMO.md) · [`docs/CLIENT_INTEGRATION.md`](./CLIENT_INTEGRATION.md)
+- **Owner / decision-maker:** Project owner — set the problem and constraints, evaluated the
+  options presented, and made every final call recorded below.
+- **Engineering support:** Surfaced and compared options, prototyped the starter, and
+  documented rationale for the owner's review.
+- **Related artifacts:** [`ONE_PAGER.md`](./ONE_PAGER.md) (slide summary) · [`README.md`](../README.md) · [`docs/DEMO.md`](./DEMO.md) · [`docs/CLIENT_INTEGRATION.md`](./CLIENT_INTEGRATION.md)
 
 ---
 
@@ -77,6 +80,11 @@ end-users* and answer `can user X do action Y?` over an API. It is **not** an
 authentication/login problem — the clients' own systems authenticate their users
 and then call this platform to check permissions. This reframe is the root
 decision that shaped the solution.
+
+> **Process note.** The design below was reached through a structured
+> problem-first discussion: the owner stated the problem and constraints, then
+> worked through each decision point one at a time, weighing the options
+> presented before committing. Every decision in §4 was made by the owner.
 
 ---
 

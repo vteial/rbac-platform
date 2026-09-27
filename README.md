@@ -12,6 +12,9 @@ organizations, each with **their own custom role vocabulary**, and answer
 > own systems authenticate their users and then call this platform to check
 > permissions.
 
+**Design rationale:** see the [Decision Journal](docs/DECISION_JOURNAL.md) (full ADR-style
+record) and the [One-Page Summary](docs/ONE_PAGER.md) (slide overview).
+
 ---
 
 ## The two "auths" — do not confuse them
