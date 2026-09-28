@@ -20,6 +20,7 @@ For understanding *how* it works and how clients consume it.
 | [design/DECISION_JOURNAL.md](design/DECISION_JOURNAL.md) | ADR-style record of every decision (the source of truth for *why*). |
 | [design/CLIENT_INTEGRATION.md](design/CLIENT_INTEGRATION.md) | How a client's system calls the `check` API (HTTP + SDK). |
 | [design/epic-advanced-rbac.md](design/epic-advanced-rbac.md) | **Epic:** requirements for the advanced RBAC/ReBAC healthcare tenant (2nd showcase). |
+| [design/animation-options.md](design/animation-options.md) | Options analysis for turning the NARRATIVE into a short explainer video (backlog). |
 
 ## 🛠 Guides — operating it
 For running the platform locally and demoing it.
