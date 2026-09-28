@@ -52,6 +52,22 @@ git config user.email   # -> vteial@gmail.com
 
 ---
 
+## 2a. Local DX commands (`just`)
+
+The fastest path — self-diagnosing, one command each (`brew install just` if missing):
+
+```bash
+just               # list all commands
+just env-doctor    # audit the machine (tools, ports, .env) BEFORE anything runs
+just start-local   # bring backends up + wait for healthy
+just validate-local # probe running services
+just seed-local        # clean state: one tenant, drive the app by hand
+just seed-local-demo   # demo state: Client A + Client B showcase
+just stop-local        # stop (or 'just stop-local wipe' to drop volumes)
+```
+
+The raw equivalents are in the sections below. Spec: [`specs/poc-spec-local-dx.md`](specs/poc-spec-local-dx.md).
+
 ## 3. Containers (Podman)
 
 The stack (Postgres + OpenFGA + PocketBase + console) runs via Compose. On the

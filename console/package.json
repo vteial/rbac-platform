@@ -14,7 +14,9 @@
     "preview": "vite preview",
     "start": "node build/index.js",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "seed": "tsx scripts/seed.ts",
+    "seed": "tsx scripts/seed-local-demo.ts",
+    "seed:local": "tsx scripts/seed-local.ts",
+    "seed:local:demo": "tsx scripts/seed-local-demo.ts",
     "verify:model": "tsx scripts/verify-model.ts"
   },
   "devDependencies": {

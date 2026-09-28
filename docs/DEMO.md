@@ -1,5 +1,9 @@
 # Client Demo Walkthrough
 
+> The **literal click-path** — the commands and clicks to run the demo. For the
+> *story* behind it (problem → solution → why it matters), see
+> [`NARRATIVE.md`](./NARRATIVE.md) § 7 (Walkthrough as Proof) points here.
+
 Goal: convince the client that this one self-hosted service can onboard any
 organization with **their own** role vocabulary and answer permission checks
 over an API.
@@ -7,11 +11,18 @@ over an API.
 ## 0. Start the platform
 
 ```bash
-cp .env.example .env
-docker compose up -d postgres openfga pocketbase
+just start-local        # copies .env if missing, brings up backends, waits for healthy
+just validate-local     # confirm all services are up + answering
 ```
 
-Wait until healthy (`docker compose ps`).
+<details><summary>Without <code>just</code> (raw commands)</summary>
+
+```bash
+cp .env.example .env
+docker compose up -d postgres openfga pocketbase   # routed to Podman
+docker compose ps                                   # wait until healthy
+```
+</details>
 
 ## 1. Create the console admin (one-time)
 
@@ -23,12 +34,22 @@ Wait until healthy (`docker compose ps`).
 ## 2. Seed the demo tenants
 
 ```bash
-cd console
-pnpm install
-pnpm seed
+just seed-local-demo    # the pre-baked showcase (Client A + Client B)
 ```
 
-This creates:
+> For a **clean state** to build your own demo by hand instead, use `just seed-local`
+> (one tenant, its role vocabulary, no users).
+
+<details><summary>Without <code>just</code> (raw commands)</summary>
+
+```bash
+cd console
+pnpm install
+OPENFGA_API_URL=http://localhost:8080 pnpm seed:local:demo
+```
+</details>
+
+The demo seed creates:
 
 | Tenant | Roles | Sample users |
 |---|---|---|
@@ -40,7 +61,7 @@ The seed also prints sample checks so you can see it working before touching the
 ## 3. Run the console
 
 ```bash
-pnpm dev      # http://localhost:5173
+cd console && pnpm dev      # http://localhost:5173
 ```
 
 Log in with the console user you created in step 1.

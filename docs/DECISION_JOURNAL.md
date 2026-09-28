@@ -302,6 +302,53 @@ Each entry: **Context → Options → Decision → Rationale → Consequences**.
   end-to-end; direct HTTP checks resolve correctly (`esha` deploy ✅, `chandra` deploy
   ⛔, `divya` test ✅); `pnpm check` 0 errors; `verify:model` still 11/11.
 
+### ADR-12 — Local DX command layer via `just` (reusable across POCs)
+
+- **Context:** Every new POC re-incurs the same "get it running locally" pain — tacit
+  setup knowledge (is Podman routed? is corepack on PATH? which URL does the seed use?)
+  lives in people's heads and re-bites on each project. The owner wants this fixed once,
+  as a **reusable convention**, not a one-off.
+- **Options:** (a) pnpm `package.json` scripts (tied to Node/this repo); (b) shell +
+  `make` (everywhere, but tab-sensitive, no built-in listing); (c) shell + **`just`**
+  (modern, self-documenting via `just --list`, language-agnostic).
+- **Decision:** **`just`** — a repo-root `justfile` with thin recipes over
+  `scripts/*.sh`; all repo-specifics in a variable header so the file + `scripts/` copy
+  to the next POC by editing the header. Six commands: `env-doctor`, `validate-local`,
+  `start-local`, `stop-local`, `seed-local` (clean), `seed-local-demo` (demo).
+- **Rationale:** Encodes the tacit knowledge in scripts — notably the **host-vs-container
+  URL trap** (host-run seeds must hit `localhost`, not the compose-internal `openfga:8080`
+  that bit us in the ADR-11 run). Clear split: `env-doctor` audits the *machine* before
+  anything runs; `validate-local` probes *running services*. Two seeds: a **clean state**
+  to drive the app by hand, a **demo state** for quick test-and-show.
+- **Consequences:** `justfile` + `scripts/env-doctor.sh` + `scripts/validate-local.sh` at
+  root; seed split into `seed-core.ts` + `seed-local.ts` + `seed-local-demo.ts`. Spec:
+  `docs/specs/poc-spec-local-dx.md`. Verified live: full lifecycle runs green
+  (env-doctor 0 failures; start→seed→validate→stop). **`just` gotcha learned:** CLI
+  `name=value` is a *variable override*, not a recipe argument — so the wipe flag is a
+  plain positional (`just stop-local wipe`), not `wipe=true`.
+
+### ADR-13 — A living **Narrative** doc that doubles as an animation brief
+
+- **Context:** The owner's recurring POC pain isn't just setup — it's that POCs **fail to
+  land with an audience** because the problem and solution aren't made legible. Slide-style
+  one-pagers get written after the fact and drift from reality.
+- **Options:** (a) keep the ad-hoc `ONE_PAGER.md`; (b) a **living narrative doc**, born at
+  kickoff and reconciled to the implementation, structured to also brief a downstream AI
+  that produces an animated explainer.
+- **Decision:** **(b)** — a `NARRATIVE.md` (convention:
+  `docs/reference/aidlc/POC-NARRATIVE.template.md`) that is the audience-facing story spine
+  (problem → stakes → insight → solution → visual model → running example → walkthrough-as-
+  proof → is/isn't → **animation brief**). It **links** to the Decision Journal and POC-LOG
+  rather than restating them. `ONE_PAGER.md` is superseded (kept as a pointer stub); `DEMO.md`
+  becomes the literal click-path the narrative's proof section points at.
+- **Rationale:** Makes "explain it visually" a first-class, versioned artifact instead of a
+  throwaway deck. Diagrams are **Mermaid** (human-viewable on GitHub *and* machine-parseable
+  by the downstream animation agent). A scene list + do-not-say guardrails keep the eventual
+  film honest to current status.
+- **Consequences:** New template under `docs/reference/aidlc/`; first instance
+  `docs/NARRATIVE.md` for rbac-platform. The doc is **living** — a §10 change log tracks
+  reconciliation between the drafted narrative and what actually shipped.
+
 ---
 
 ## 5. Final Architecture
@@ -403,3 +450,5 @@ model from a friendly role editor — clients never write the DSL.
 | 9 | Podman + Docker Compose v2 CLI | Docker Desktop; podman-compose | Machine standard; Compose v2 honors health gates podman-compose misses |
 | 10 | Fly.io (backends) + Vercel (console) | all-Vercel; all-Fly | Matches machine deploy triad + prior Fly/PocketBase experience |
 | 11 | Tenant-wide resource = `resource:_tenant` (concrete) | `resource:*` (typed wildcard) | Wildcard is illegal in a tuple's object position; sentinel keeps classic RBAC + ADR-1 open |
+| 12 | Local DX layer via `just` (reusable) | pnpm scripts; make | Modern, self-documenting, language-agnostic; encodes host-vs-container URL trap; copies to next POC |
+| 13 | Living `NARRATIVE.md` + animation brief | ad-hoc one-pager | Audience legibility as a first-class artifact; Mermaid feeds downstream animation agent |

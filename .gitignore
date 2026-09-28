@@ -9,6 +9,9 @@ console/build/
 console/.vercel/
 console/.output/
 
+# Local role-store data (seed/runtime writes; see role-store.ts)
+console/.data/
+
 # Env / secrets
 .env
 *.local

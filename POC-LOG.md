@@ -30,6 +30,8 @@ Index of decisions of record (details in `docs/DECISION_JOURNAL.md`):
 - **ADR-9** — Container engine = **Podman**, prefer **Docker Compose v2 CLI** (honors health gates podman-compose misses).
 - **ADR-10** — Deploy direction = **Fly.io** (backends) + **Vercel** (console).
 - **ADR-11** — Tenant-wide resource = concrete **`resource:_tenant`**, not a typed wildcard (`resource:*` is illegal in a tuple's object position).
+- **ADR-12** — **Local DX layer via `just`** (reusable across POCs): `env-doctor` · `validate-local` · `start-local` · `stop-local` · `seed-local` (clean) · `seed-local-demo` (demo).
+- **ADR-13** — A **living `NARRATIVE.md`** (problem→solution story) that doubles as the brief for a downstream animation agent; supersedes `ONE_PAGER.md`.
 
 Process decisions (POC-level, not in the ADR journal):
 - **D-P1 — Adopt Mini-AIDLC** *(2026-09-27)* — Trigger: owner wants a repeatable, graduation-ready process · Options: (a) copy scaffold as-is / (b) adopt but reference existing docs · **Chose (b), scaffold at repo root, because we already have a richer `docs/DECISION_JOURNAL.md` and want one source of truth — mini `§ Decisions` points to it rather than duplicating.**
@@ -40,6 +42,7 @@ Process decisions (POC-level, not in the ADR journal):
 
 | Item | State | Note |
 | :--- | :---: | :--- |
+| POC foundation — `just` DX layer + living `NARRATIVE.md` convention | done | Approved by owner 2026-09-28. Six `just` recipes (env-doctor/validate/start/stop/seed-local/seed-local-demo), reusable across POCs; `NARRATIVE.md` + template feeding a downstream animation agent. Full lifecycle verified live. |
 | Live end-to-end verification (`docker compose up` + `pnpm seed`, on Podman) | done | Approved by owner 2026-09-28. Ran on Podman via Compose v2 — caught & fixed a real bug (`resource:*` object → `resource:_tenant`, ADR-11); seed completes end-to-end, live HTTP checks resolve (`esha` deploy ✅, `chandra` ⛔, `divya` test ✅). Browser UI walkthrough left to owner-side validation. |
 | Reorg repo so root talks about project+process (AGENTS.md + scaffold → docs/reference/aidlc) | done | Approved by owner 2026-09-28 (commit `bb77c1c`). |
 | Align toolchain to iMac M3 standard (pnpm · Podman · dev guide · ADRs) | done | Approved by owner 2026-09-28 (commits `48093bc`+`d693b97`). |
@@ -56,6 +59,7 @@ Process decisions (POC-level, not in the ADR journal):
 ## § Shipped  → seeds `CHANGELOG.md` (carry forward as history)
 > What works, newest first — with the **eyeball-verify** note (the human-gate record at POC speed).
 
+- *(2026-09-28)* **POC foundation — `just` DX layer + living Narrative doc** — two reusable-across-POCs conventions. **(1) DX layer (ADR-12):** a repo-root `justfile` + `scripts/` giving six self-documenting commands — `env-doctor` (audit the *machine*: tools, Podman routing, ports, `.env`), `validate-local` (probe *running services*), `start-local` (bootstrap `.env` + up + health-wait), `stop-local` (`wipe` to drop volumes), `seed-local` (clean state — one tenant, drive by hand), `seed-local-demo` (Client A/B showcase). Seed refactored into `seed-core.ts` + two entry points; encodes the host-vs-container URL trap so host-run seeds can't fail the ADR-11 way. **(2) Narrative (ADR-13):** `docs/NARRATIVE.md` (+ `POC-NARRATIVE.template.md`) — the living problem→solution story with Mermaid diagrams + a scene list that briefs a downstream animation agent; supersedes `ONE_PAGER.md` (now a stub); `DEMO.md` repointed as the literal click-path. Verified: full lifecycle runs green — `env-doctor` 0 failures, `start-local`→`seed-local`→`seed-local-demo`→`validate-local` (3 stores, checks resolve `esha` deploy ✅ / `chandra` ⛔)→`stop-local` (volumes preserved); `pnpm check` 0 errors. Spec: `docs/specs/poc-spec-local-dx.md` · approved by owner (2026-09-28).
 - *(2026-09-28)* **Live end-to-end verification on Podman — and a real-bug fix** — brought the full stack up via **Docker Compose v2 routed to Podman** (Postgres + OpenFGA + PocketBase, all healthy; migrate exited clean, health-gate ordering honored), then ran `pnpm seed`. The live run **caught a bug the offline verifier could not**: roles were bound to the tenant-wide resource using the object `resource:*`, but OpenFGA rejects a typed wildcard in a tuple's *object* position. Fixed by switching to a concrete sentinel object `resource:_tenant` (exported `TENANT_WIDE_RESOURCE_ID`, threaded through `model-builder.ts` · `openfga.ts` · `seed.ts` · `verify-model.ts`) — **ADR-11**; ADR-1's object-level path stays open, no model migration. Verified: `pnpm seed` completes end-to-end (2 stores, models, bindings, assignments); **direct HTTP checks against the running engine** resolve `esha` deploy ✅ / `chandra` deploy ⛔ / `divya` test ✅; console dev server serves (`/health` ok, unauth `/` → `/login`); `pnpm check` **0 errors**; `verify:model` still **11/11**. Docs updated (`DECISION_JOURNAL.md`, `CLIENT_INTEGRATION.md`) · approved by owner (2026-09-28). ⚠️ Browser UI walkthrough left to owner-side validation.
 - *(2026-09-28)* **Repo reorg — root talks about project + process** — added root **`AGENTS.md`** (industry-standard agent entry point) and removed the confusing `KIRO_KICKSTART.md`; moved the Mini-AIDLC scaffold (KICKSTART, MIGRATION, POC-SPEC.template, skills/graduate) → **`docs/reference/aidlc/`** via `git mv`. Root now = `AGENTS.md` · `README.md` · `POC-LOG.md`. Verified: git detected all moves as renames (history preserved), **zero dangling links** (re-grepped), all cross-links fixed · approved by owner (2026-09-28).
 - *(2026-09-28)* **Toolchain aligned to iMac M3 standard** — console npm→**pnpm** (corepack-pinned `pnpm@10.27.0`, `pnpm-lock.yaml`, Dockerfile + docs updated); `docker-compose.yml` hardened for **Podman** (self-heal `restart` + Compose-v2-preferred note; health gates kept); new **`docs/DEVELOPMENT_GUIDE.md`**; **ADR-8/9/10** recorded. Verified: `pnpm build` clean, `pnpm check` 0 errors, `pnpm verify:model` **11/11** pass under pnpm; compose YAML validated · approved by owner (2026-09-28).
@@ -65,7 +69,7 @@ Process decisions (POC-level, not in the ADR journal):
 ## § Spec  → grows into full Kiro Spec(s) at graduation
 > Pointer to the current spec (if a unit of work warranted one). Small asks stay inline. Template: `docs/reference/aidlc/POC-SPEC.template.md`; actual specs live under `docs/specs/`.
 
-- Current: none (inline asks so far).
+- [`docs/specs/poc-spec-local-dx.md`](docs/specs/poc-spec-local-dx.md) — Local DX command layer (`just`). Status: verified.
 
 ---
 
