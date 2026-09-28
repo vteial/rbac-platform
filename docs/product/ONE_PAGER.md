@@ -9,7 +9,7 @@
 >
 > - **The story** → [`NARRATIVE.md`](./NARRATIVE.md)
 > - **The technical *why*** → [`DECISION_JOURNAL.md`](../design/DECISION_JOURNAL.md)
-> - **The live click-path** → [`DEMO.md`](../guides/DEMO.md)
+> - **The live click-path** → [`demo-guide.md`](../guides/demo-guide.md)
 > - **Live state** → [`POC-LOG.md`](../../POC-LOG.md)
 >
 > Kept as a stub so existing links don't break.

@@ -12,7 +12,7 @@ It is an **authorization** service (OpenFGA), not a login service.
 **Stack:** OpenFGA (authz, one store per tenant) · PocketBase (console auth) ·
 SvelteKit console · PostgreSQL · Docker Compose.
 **Toolchain:** pnpm (via corepack) · Podman (`docker` routed to it; prefer Docker
-Compose v2 CLI). Details: [`docs/guides/DEVELOPMENT_GUIDE.md`](docs/guides/DEVELOPMENT_GUIDE.md).
+Compose v2 CLI). Details: [`docs/guides/development-guide.md`](docs/guides/development-guide.md).
 
 ## How we work — Mini-AIDLC
 Phase shape: **brainstorm → implement → verify → done.** Read the model at
@@ -44,8 +44,8 @@ explicitly approves the POC for real development.
 | **Docs hub** (start here) | [`docs/README.md`](docs/README.md) |
 | The story (audience-facing) | [`docs/product/NARRATIVE.md`](docs/product/NARRATIVE.md) |
 | Decisions of record (ADR) | [`docs/design/DECISION_JOURNAL.md`](docs/design/DECISION_JOURNAL.md) |
-| Local setup / run / deploy | [`docs/guides/DEVELOPMENT_GUIDE.md`](docs/guides/DEVELOPMENT_GUIDE.md) |
-| Demo walkthrough | [`docs/guides/DEMO.md`](docs/guides/DEMO.md) · [`docs/design/CLIENT_INTEGRATION.md`](docs/design/CLIENT_INTEGRATION.md) |
+| Local setup / run / deploy | [`docs/guides/development-guide.md`](docs/guides/development-guide.md) |
+| Demo walkthrough | [`docs/guides/demo-guide.md`](docs/guides/demo-guide.md) · [`docs/design/CLIENT_INTEGRATION.md`](docs/design/CLIENT_INTEGRATION.md) |
 | Mini-AIDLC method (reference) | [`docs/reference/aidlc/`](docs/reference/aidlc/) |
 
 ## The loop (per unit of work)
@@ -69,9 +69,9 @@ just setup-console-user  # PB superuser + console login
 just seed-local-demo     # Client A + Client B demo data
 cd console && pnpm dev   # http://localhost:5173
 ```
-Full command list: `just`. Demo walkthrough: `docs/guides/DEMO.md`. Next units come from
+Full command list: `just`. Demo walkthrough: `docs/guides/demo-guide.md`. Next units come from
 `POC-LOG.md` § Ideas (e.g. API gateway, object-level permissions, role persistence).
 
 > **Caveat:** the OpenFGA healthcheck uses gRPC on `:8081`. If a stray process holds it,
 > free or remap the port. `just env-doctor` flags port conflicts. Ports table:
-> `docs/guides/DEVELOPMENT_GUIDE.md`.
+> `docs/guides/development-guide.md`.

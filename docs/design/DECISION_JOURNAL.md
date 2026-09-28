@@ -23,7 +23,7 @@
   options presented, and made every final call recorded below.
 - **Engineering support:** Surfaced and compared options, prototyped the starter, and
   documented rationale for the owner's review.
-- **Related artifacts:** [`NARRATIVE.md`](../product/NARRATIVE.md) (the story) · [`ONE_PAGER.md`](../product/ONE_PAGER.md) (stub) · [`README.md`](../../README.md) · [`DEMO.md`](../guides/DEMO.md) · [`CLIENT_INTEGRATION.md`](./CLIENT_INTEGRATION.md)
+- **Related artifacts:** [`NARRATIVE.md`](../product/NARRATIVE.md) (the story) · [`ONE_PAGER.md`](../product/ONE_PAGER.md) (stub) · [`README.md`](../../README.md) · [`demo-guide.md`](../guides/demo-guide.md) · [`CLIENT_INTEGRATION.md`](./CLIENT_INTEGRATION.md)
 
 ---
 

@@ -6,6 +6,11 @@ Repo-specific setup, keyed to the standard developer machine (iMac M3 / Apple
 Silicon). If your environment differs, the tool choices below are the intent;
 adapt paths accordingly.
 
+- **Package manager:** pnpm (via corepack)
+- **Container engine:** Podman (`docker` routed to Podman)
+- **Local backends:** OpenFGA + PocketBase + PostgreSQL (Docker Compose)
+- **Deploy direction:** Fly.io (OpenFGA, PocketBase) · Vercel (console) — see [§7 Deployment](#7-deployment)
+
 ## Contents
 1. [Prerequisites](#1-prerequisites)
 2. [Clone & identity](#2-clone--identity-multi-account-git) · [2a. Local DX commands (`just`)](#2a-local-dx-commands-just)
@@ -15,11 +20,6 @@ adapt paths accordingly.
 6. [Everyday commands](#6-everyday-commands-map-to-the-machine-aliases)
 7. [Deployment](#7-deployment)
 8. [Process — Mini-AIDLC](#8-process--mini-aidlc)
-
-- **Package manager:** pnpm (via corepack)
-- **Container engine:** Podman (`docker` routed to Podman)
-- **Local backends:** OpenFGA + PocketBase + PostgreSQL (Docker Compose)
-- **Deploy direction:** Fly.io (OpenFGA, PocketBase) · Vercel (console) — see [§ Deployment](#deployment)
 
 ---
 
@@ -165,7 +165,7 @@ pnpm verify:model                                           # offline logic chec
 
 First-run console login: `just setup-console-user` creates the PocketBase superuser
 (`:8090/_/`) and the console user (`:5173`) with demo defaults. Full demo script:
-[DEMO.md](./DEMO.md).
+[demo-guide.md](./demo-guide.md).
 
 ---
 

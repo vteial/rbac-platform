@@ -15,7 +15,7 @@
 | **One-line** | One self-hosted service that lets *any* client organization define *its own* roles and answer "can this user do this?" over an API. |
 | **Audience** | A prospective client (and their engineers) who need to trust one platform to run *their* access rules. |
 | **Status** | reconciled — core verified live, demo walkthrough owner-validated (2026-09-28); updated as new features land |
-| **Companions** | Decisions → [`DECISION_JOURNAL.md`](../design/DECISION_JOURNAL.md) · Live state → [`POC-LOG.md`](../../POC-LOG.md) · Click-path → [`DEMO.md`](../guides/DEMO.md) |
+| **Companions** | Decisions → [`DECISION_JOURNAL.md`](../design/DECISION_JOURNAL.md) · Live state → [`POC-LOG.md`](../../POC-LOG.md) · Click-path → [`demo-guide.md`](../guides/demo-guide.md) |
 
 ---
 
@@ -171,7 +171,7 @@ The demo *is* the proof. Each beat answers a claim from above.
 | 4 | Add a `viewer` role live, assign a user, check it | Self-service onboarding of arbitrary roles (§4) |
 | 5 | The same check as a plain HTTP call | Consumed as an API by the client's own system (§4) |
 
-→ Literal click-path with commands: [`DEMO.md`](../guides/DEMO.md).
+→ Literal click-path with commands: [`demo-guide.md`](../guides/demo-guide.md).
 
 ## 8. What It Is / Isn't
 
@@ -199,7 +199,7 @@ The demo *is* the proof. Each beat answers a claim from above.
   | 4 | §6–§7 | `esha` asks "can I deploy?" → green YES; `chandra` asks → red NO | "Their app just asks. The answer comes back — yes, or no." |
   | 5 | §4 | Same answer shown as a plain API call | "It's an API. Their system asks; ours answers." |
 - **Assets provided:** the five Mermaid diagrams above (renderable to SVG), this doc,
-  and a screen recording of the [`DEMO.md`](../guides/DEMO.md) click-path if available.
+  and a screen recording of the [`demo-guide.md`](../guides/demo-guide.md) click-path if available.
 - **Prompt guidance:** use "authorization," avoid "login/identity." Keep the two-client
   contrast central. Do not imply cloud-hosting — it's self-hosted.
 - **Do-not-say (honesty to status):** don't claim production-hardening (auth/TLS on the

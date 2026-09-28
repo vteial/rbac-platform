@@ -25,8 +25,8 @@ For running the platform locally and demoing it.
 
 | Doc | What it is |
 | :--- | :--- |
-| [guides/DEVELOPMENT_GUIDE.md](guides/DEVELOPMENT_GUIDE.md) | Local setup, the `just` DX commands, ports, deploy direction. |
-| [guides/DEMO.md](guides/DEMO.md) | The literal click-path to run the demo end-to-end. |
+| [guides/development-guide.md](guides/development-guide.md) | Local setup, the `just` DX commands, ports, deploy direction. |
+| [guides/demo-guide.md](guides/demo-guide.md) | The literal click-path to run the demo end-to-end. |
 
 ## 📐 Specs — per-feature contracts
 Lightweight contracts for units of work big enough to warrant one.

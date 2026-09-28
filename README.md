@@ -25,7 +25,7 @@ This POC follows the **Mini-AIDLC** process (AI-driven development at POC speed)
 - **The model:** [`docs/reference/aidlc/KICKSTART.md`](docs/reference/aidlc/KICKSTART.md) — phase shape (`brainstorm → implement → verify → done`), human gate (nothing is "done" until the owner approves), decisions recorded.
 - **Live state:** [`POC-LOG.md`](POC-LOG.md) — the single collapsed artifact (`§ Decisions / Now / Ideas / Shipped / Spec`). Decisions detail lives in [`docs/design/DECISION_JOURNAL.md`](docs/design/DECISION_JOURNAL.md); `POC-LOG.md § Decisions` indexes it.
 - **Per-feature contracts:** template at [`docs/reference/aidlc/POC-SPEC.template.md`](docs/reference/aidlc/POC-SPEC.template.md); actual specs under [`docs/specs/`](docs/specs/).
-- **Local setup:** [`docs/guides/DEVELOPMENT_GUIDE.md`](docs/guides/DEVELOPMENT_GUIDE.md) — pnpm + Podman + ports + deploy direction, keyed to the standard dev machine.
+- **Local setup:** [`docs/guides/development-guide.md`](docs/guides/development-guide.md) — pnpm + Podman + ports + deploy direction, keyed to the standard dev machine.
 - **Graduation (POC → standard):** [`docs/reference/aidlc/MIGRATION.md`](docs/reference/aidlc/MIGRATION.md) + [`docs/reference/aidlc/skills/graduate/SKILL.md`](docs/reference/aidlc/skills/graduate/SKILL.md) — run `/graduate` **only** after the owner approves the POC for real development.
 
 ---
@@ -119,7 +119,7 @@ Or run everything (including the console) via Compose: `docker compose up -d --b
 </details>
 
 See the **[docs hub](docs/README.md)** for everything, or jump to
-**[docs/guides/DEMO.md](docs/guides/DEMO.md)** (full demo walkthrough) and
+**[docs/guides/demo-guide.md](docs/guides/demo-guide.md)** (full demo walkthrough) and
 **[docs/design/CLIENT_INTEGRATION.md](docs/design/CLIENT_INTEGRATION.md)** (how a client calls the
 `check` API, modes a & b).
 
