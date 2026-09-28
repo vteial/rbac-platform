@@ -4,10 +4,19 @@
 #   pocketbase  -> admin console authentication
 #   console     -> SvelteKit admin console (UI + server)
 #
-# Bring up the backing services first:
-#   docker compose up -d postgres openfga pocketbase
-# Then seed + run the console, or build everything:
-#   docker compose up -d --build
+# CONTAINER ENGINE: on the standard dev machine, `docker` is routed to Podman
+# (`docker context use podman`). Prefer the Docker Compose v2 CLI (routed to
+# Podman) — it reliably honors `depends_on: condition: service_healthy`.
+#
+#   docker compose up -d postgres openfga pocketbase   # backing services first
+#   docker compose up -d --build                        # or everything
+#
+# NOTE on `podman-compose` (v1.x): it does NOT reliably honor the
+# `depends_on: condition:` health gates (containers/podman-compose#1183/#1422/#1330).
+# The `restart: unless-stopped` policies below make start-order races self-heal
+# (openfga retries until Postgres+migrate are ready), so the stack converges even
+# if a dependent starts early. For strict ordering, use the Docker Compose v2 CLI.
+# See docs/DEVELOPMENT_GUIDE.md.
 
 services:
   postgres:
@@ -39,6 +48,10 @@ services:
 
   openfga:
     image: openfga/openfga:latest
+    # unless-stopped: if start-order races ahead of Postgres/migrate (e.g. under
+    # podman-compose, which may not honor the health gate), OpenFGA exits and is
+    # restarted until the datastore is migrated and reachable — the stack converges.
+    restart: unless-stopped
     depends_on:
       openfga-migrate:
         condition: service_completed_successfully
@@ -81,6 +94,9 @@ services:
     build:
       context: ./console
       dockerfile: Dockerfile
+    # Health gates below are honored by Docker Compose v2. Under podman-compose the
+    # console may start early; it stays up and simply serves once OpenFGA/PocketBase
+    # are reachable (no crash loop). restart: unless-stopped covers transient exits.
     depends_on:
       openfga:
         condition: service_healthy

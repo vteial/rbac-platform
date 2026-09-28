@@ -24,6 +24,7 @@ This POC follows the **Mini-AIDLC** process (AI-driven development at POC speed)
 - **The model:** [`KICKSTART.md`](KICKSTART.md) — phase shape (`brainstorm → implement → verify → done`), human gate (nothing is "done" until the owner approves), decisions recorded.
 - **Live state:** [`POC-LOG.md`](POC-LOG.md) — the single collapsed artifact (`§ Decisions / Now / Ideas / Shipped / Spec`). Decisions detail lives in [`docs/DECISION_JOURNAL.md`](docs/DECISION_JOURNAL.md); `POC-LOG.md § Decisions` indexes it.
 - **Per-feature contracts:** template at [`POC-SPEC.template.md`](POC-SPEC.template.md); actual specs under [`docs/specs/`](docs/specs/).
+- **Local setup:** [`docs/DEVELOPMENT_GUIDE.md`](docs/DEVELOPMENT_GUIDE.md) — pnpm + Podman + ports + deploy direction, keyed to the standard dev machine.
 - **Graduation (POC → standard):** [`MIGRATION.md`](MIGRATION.md) + [`skills/graduate/SKILL.md`](skills/graduate/SKILL.md) — run `/graduate` **only** after the owner approves the POC for real development.
 
 ---
@@ -100,16 +101,19 @@ docker compose up -d postgres openfga pocketbase
 
 # 4. Seed the demo tenants (Client A: Parent/Child, Client B: dev/qa/platform-engineer)
 cd console
-npm install
-npm run seed
+pnpm install
+pnpm seed
 
 # (optional) verify the RBAC decision logic offline — no server needed:
-npm run verify:model
+pnpm verify:model
 
 # 5. Start the console (dev)
-npm run dev
+pnpm dev
 #    Open http://localhost:5173 and log in with your PocketBase console user.
 ```
+
+> Package manager is **pnpm** (via corepack). If you don't have it: `corepack enable`.
+> Container commands (`docker compose`) run on **Podman** on the standard dev machine — see [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md).
 
 Or run everything (including the console) via Compose:
 

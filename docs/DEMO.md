@@ -24,8 +24,8 @@ Wait until healthy (`docker compose ps`).
 
 ```bash
 cd console
-npm install
-npm run seed
+pnpm install
+pnpm seed
 ```
 
 This creates:
@@ -40,7 +40,7 @@ The seed also prints sample checks so you can see it working before touching the
 ## 3. Run the console
 
 ```bash
-npm run dev      # http://localhost:5173
+pnpm dev      # http://localhost:5173
 ```
 
 Log in with the console user you created in step 1.

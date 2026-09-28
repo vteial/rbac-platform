@@ -218,6 +218,57 @@ Each entry: **Context → Options → Decision → Rationale → Consequences**.
 - **Consequences:** Four services (Postgres, OpenFGA, PocketBase, console). Scale path
   is documented but intentionally not over-engineered for small-to-medium use.
 
+### ADR-8 — Package manager: pnpm (via corepack)
+
+- **Context:** Aligning the repo to the standard developer machine (iMac M3), whose
+  standard mandates pnpm over npm.
+- **Options:** (a) npm (default, what the starter shipped with); (b) **pnpm** (via
+  corepack); (c) yarn/bun.
+- **Decision:** **pnpm**, pinned via `packageManager: "pnpm@10.27.0"` + corepack.
+- **Rationale:** Machine standard (Guideline 5): pnpm's hard-linked global store
+  eliminates duplicated `node_modules` and is faster. Pinning via corepack makes the
+  version reproducible across the dev machine, Docker, and CI without a global install.
+- **Consequences:** `package-lock.json` → `pnpm-lock.yaml`; Dockerfile uses
+  `corepack enable` + `pnpm install --frozen-lockfile` + `pnpm build`; `esbuild`
+  listed under `pnpm.onlyBuiltDependencies` so its install script runs reproducibly
+  (tsx depends on it). Verified: build clean, `svelte-check` 0 errors, `verify:model`
+  11/11 pass under pnpm.
+
+### ADR-9 — Container engine: Podman (Docker Compose v2 CLI as the primary path)
+
+- **Context:** The standard machine runs Podman with `docker` routed to it
+  (`docker context use podman`); `podman-compose` 1.x has known gaps.
+- **Options:** (a) Docker Desktop; (b) **Podman** with the Docker Compose v2 CLI
+  routed to it; (c) Podman with `podman-compose`.
+- **Decision:** **Podman as the engine; prefer the Docker Compose v2 CLI** (routed to
+  Podman) for bring-up.
+- **Rationale:** Machine standard (Guideline 3): Podman is daemonless/rootless/OSS.
+  But `podman-compose` (v1.x) does not reliably honor
+  `depends_on: condition: service_healthy` / `service_completed_successfully`
+  (containers/podman-compose #1183/#1422/#1330), which our migrate→openfga→console
+  chain relies on. The Docker Compose v2 CLI honors these gates and runs on Podman
+  transparently.
+- **Consequences:** `docker-compose.yml` keeps the `depends_on: condition:` blocks
+  (correct for Compose v2) and adds `restart: unless-stopped` on OpenFGA so it
+  self-heals if start-order races ahead under `podman-compose` — the stack converges
+  either way. Documented in `docs/DEVELOPMENT_GUIDE.md`. (The OpenFGA image's
+  `grpc_health_probe` healthcheck was verified present — no change needed there.)
+
+### ADR-10 — Deployment direction: Fly.io (backends) + Vercel (console)
+
+- **Context:** Aligning to the standard machine's deploy triad (Fly.io, Vercel,
+  Supabase). Not yet wired — direction only.
+- **Options:** (a) Fly.io for backends + Vercel for the console; (b) all-Vercel;
+  (c) all-Fly; (d) other PaaS.
+- **Decision:** **Fly.io** for OpenFGA + PocketBase (+ Postgres), **Vercel** for the
+  SvelteKit console — recorded as direction, deferred to a deployment unit of work.
+- **Rationale:** Matches the standard toolchain and prior operational experience
+  (PocketBase-on-Fly). Fly suits always-on stateful backends; Vercel suits the web
+  console. Keeps deployment consistent with the machine standard rather than ad hoc.
+- **Consequences:** Console uses `adapter-node` today; may switch to
+  `adapter-vercel` at deploy time. Before any non-local exposure: enable OpenFGA
+  `preshared` key auth + TLS. Tracked in `POC-LOG.md` § Ideas until scheduled.
+
 ---
 
 ## 5. Final Architecture
@@ -278,7 +329,8 @@ from a friendly role editor — clients never write the DSL.
   server + Postgres) was **not executed** in the build environment due to sandbox
   limits on long-running server processes. The path is designed to work and the SDK
   usage matches the documented API, but this hop should be confirmed by running
-  `docker compose up` + `npm run seed` on a normal machine before the client demo.
+  `docker compose up` (routed to Podman) + `pnpm seed` on the dev machine before the
+  client demo — see `docs/DEVELOPMENT_GUIDE.md`.
 
 ---
 
@@ -310,3 +362,6 @@ from a friendly role editor — clients never write the DSL.
 | 5 | HTTP + SDK consumption | One mode only | Same endpoint; supports both free |
 | 6 | PocketBase console auth | Supabase, Auth.js/Lucia | Single binary; minimal ops; demo-credible |
 | 7 | Postgres + Docker Compose | — | Supported datastore; one-command self-host |
+| 8 | pnpm (via corepack) | npm, yarn, bun | Machine standard; faster, hard-linked store; pinned/reproducible |
+| 9 | Podman + Docker Compose v2 CLI | Docker Desktop; podman-compose | Machine standard; Compose v2 honors health gates podman-compose misses |
+| 10 | Fly.io (backends) + Vercel (console) | all-Vercel; all-Fly | Matches machine deploy triad + prior Fly/PocketBase experience |

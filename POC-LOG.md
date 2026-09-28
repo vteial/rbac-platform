@@ -26,17 +26,22 @@ Index of decisions of record (details in `docs/DECISION_JOURNAL.md`):
 - **ADR-5** — Client consumption = **HTTP + SDK** (both).
 - **ADR-6** — Console auth = **PocketBase** (single binary, minimal ops).
 - **ADR-7** — Data store + packaging = **PostgreSQL + Docker Compose**.
+- **ADR-8** — Package manager = **pnpm** (via corepack) — machine standard.
+- **ADR-9** — Container engine = **Podman**, prefer **Docker Compose v2 CLI** (honors health gates podman-compose misses).
+- **ADR-10** — Deploy direction = **Fly.io** (backends) + **Vercel** (console).
 
 Process decisions (POC-level, not in the ADR journal):
 - **D-P1 — Adopt Mini-AIDLC** *(2026-09-27)* — Trigger: owner wants a repeatable, graduation-ready process · Options: (a) copy scaffold as-is / (b) adopt but reference existing docs · **Chose (b), scaffold at repo root, because we already have a richer `docs/DECISION_JOURNAL.md` and want one source of truth — mini `§ Decisions` points to it rather than duplicating.**
+- **D-P2 — Align toolchain to iMac M3 standard** *(2026-09-28)* — Trigger: owner's personal-machine guide · Options: adopt into repo (A–D) vs machine-only awareness · **Chose adopt into repo: pnpm (ADR-8), Podman/Compose-v2 (ADR-9), Fly+Vercel direction (ADR-10), + `docs/DEVELOPMENT_GUIDE.md`.**
 
 ## § Now  → seeds `SPRINT_TRACKER.md` (migrate active work)
 > What's being built right now. Simple states: `todo` / `doing` / `done`.
 
 | Item | State | Note |
 | :--- | :---: | :--- |
-| Live end-to-end verification (`docker compose up` + `npm run seed`) | todo | Not run in the build sandbox (long-running server SIGKILLed); confirm console→OpenFGA round-trip + checks resolve on a normal machine. This is the one open verification gap. |
-| Adopt Mini-AIDLC process (KICKSTART + POC-LOG + MIGRATION + graduate skill) | doing | This change. |
+| Live end-to-end verification (`docker compose up` + `pnpm seed`, on Podman) | todo | Not run in the build sandbox (long-running server SIGKILLed); confirm console→OpenFGA round-trip + checks resolve on the dev machine. This is the one open verification gap. |
+| Align toolchain to iMac M3 standard (pnpm · Podman · dev guide · ADRs) | doing | Awaiting owner verification of this change (human gate). |
+| Adopt Mini-AIDLC process (KICKSTART + POC-LOG + MIGRATION + graduate skill) | done | Landed in commit `fd326cd`. |
 
 ## § Ideas  → seeds `BACKLOG.md` (migrate the idea bucket)
 > Things for later — not committed. The shelf.
@@ -49,6 +54,7 @@ Process decisions (POC-level, not in the ADR journal):
 ## § Shipped  → seeds `CHANGELOG.md` (carry forward as history)
 > What works, newest first — with the **eyeball-verify** note (the human-gate record at POC speed).
 
+- *(2026-09-28)* **Toolchain aligned to iMac M3 standard** — console npm→**pnpm** (corepack-pinned `pnpm@10.27.0`, `pnpm-lock.yaml`, Dockerfile + docs updated); `docker-compose.yml` hardened for **Podman** (self-heal `restart` + Compose-v2-preferred note; health gates kept); new **`docs/DEVELOPMENT_GUIDE.md`**; **ADR-8/9/10** recorded. Verified: `pnpm build` clean, `pnpm check` 0 errors, `pnpm verify:model` **11/11** pass under pnpm; compose YAML validated. ⏳ awaiting owner approval (human gate).
 - *(2026-09-27)* **Decision Journal + One-Pager** (`docs/DECISION_JOURNAL.md`, `docs/ONE_PAGER.md`) — ADR-style record of all 8 decisions + slide summary. Verified: rendered/reviewed on GitHub · approved by owner.
 - *(2026-09-27)* **RBAC platform starter** — OpenFGA integration (create/list tenants, per-tenant model publish, assign, check), SvelteKit console (login → tenants → roles → assign → live test-check), PocketBase auth guard, Docker Compose (Postgres + OpenFGA + PocketBase + console), demo seed (Client A parent/child, Client B dev/qa/platform_engineer). Verified: console **builds clean**, `svelte-check` **0 errors**, model-builder emits valid OpenFGA schema-1.1 JSON, **offline decision logic 11/11 allow/deny cases pass** (`npm run verify:model`); ⚠️ live server round-trip NOT yet run · approved by owner.
 
