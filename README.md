@@ -17,6 +17,17 @@ record) and the [One-Page Summary](docs/ONE_PAGER.md) (slide overview).
 
 ---
 
+## How we work — Mini-AIDLC
+
+This POC follows the **Mini-AIDLC** process (AI-driven development at POC speed).
+
+- **The model:** [`KICKSTART.md`](KICKSTART.md) — phase shape (`brainstorm → implement → verify → done`), human gate (nothing is "done" until the owner approves), decisions recorded.
+- **Live state:** [`POC-LOG.md`](POC-LOG.md) — the single collapsed artifact (`§ Decisions / Now / Ideas / Shipped / Spec`). Decisions detail lives in [`docs/DECISION_JOURNAL.md`](docs/DECISION_JOURNAL.md); `POC-LOG.md § Decisions` indexes it.
+- **Per-feature contracts:** template at [`POC-SPEC.template.md`](POC-SPEC.template.md); actual specs under [`docs/specs/`](docs/specs/).
+- **Graduation (POC → standard):** [`MIGRATION.md`](MIGRATION.md) + [`skills/graduate/SKILL.md`](skills/graduate/SKILL.md) — run `/graduate` **only** after the owner approves the POC for real development.
+
+---
+
 ## The two "auths" — do not confuse them
 
 | Concern | Handled by | What it protects |
