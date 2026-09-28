@@ -77,6 +77,7 @@ just validate-local # probe running services
 just setup-console-user # create the console login (PB superuser + console user)
 just seed-local        # clean state: one tenant, drive the app by hand
 just seed-local-demo   # demo state: Client A + Client B showcase
+just dev               # run the console dev server (host-run, correct URLs)
 just stop-local        # stop (or 'just stop-local wipe' to drop volumes)
 ```
 
@@ -128,18 +129,35 @@ docker context use desktop-linux && open -a Docker   # on-demand fallback
 
 ## 4. Console (SvelteKit)
 
+Run the dev server via **`just dev`** — it points the host process at the stack
+(`localhost` URLs) and reads the rest from the repo-root `.env`:
+
+```bash
+just dev                # dev server on http://localhost:5173 (host-run, correct URLs)
+```
+
+<details><summary>Raw pnpm scripts (from <code>console/</code>)</summary>
+
 ```bash
 cd console
 pnpm install            # uses pnpm-lock.yaml (frozen in CI/Docker)
-
-pnpm dev                # dev server on http://localhost:5173
+# host-run needs localhost URLs (the root .env uses container hostnames):
+OPENFGA_API_URL=http://localhost:8080 POCKETBASE_URL=http://localhost:8090 pnpm dev
 pnpm build              # production build (adapter-node -> build/)
 pnpm start              # run the built server (node build/index.js)
 pnpm check              # svelte-check (type checking)
 ```
+</details>
 
-Environment variables the console reads (see `.env.example`):
-`OPENFGA_API_URL`, `OPENFGA_API_TOKEN`, `POCKETBASE_URL`, `CONSOLE_SESSION_SECRET`.
+The console reads env from the **repo-root `.env`** (via `kit.env.dir: '..'` in
+`svelte.config.js`), so root vars work without copying `.env` into `console/`.
+Variables it reads (see `.env.example`): `OPENFGA_API_URL`, `OPENFGA_API_TOKEN`,
+`POCKETBASE_URL`, `CONSOLE_SESSION_SECRET`, and for the demo login button
+`DEMO_MODE` + `CONSOLE_USER_EMAIL`/`CONSOLE_USER_PASSWORD`.
+
+**UI:** the console meets a minimum UI standard (see [DECISION_JOURNAL ADR-14](../design/DECISION_JOURNAL.md)) —
+layered design tokens, **light/dark/auto** theming (switch in the header), a public
+landing page at `/`, and the tenants dashboard at `/tenants`.
 
 ---
 

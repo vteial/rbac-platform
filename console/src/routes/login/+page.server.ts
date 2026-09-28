@@ -1,7 +1,16 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { config } from '$lib/server/config';
 import { login } from '$lib/server/pocketbase';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async () => {
+	// Expose demo affordance only when demo mode is on (never in real deployments).
+	return {
+		demo: config.demo.enabled
+			? { email: config.demo.email, password: config.demo.password }
+			: null
+	};
+};
 
 export const actions: Actions = {
 	default: async ({ request, cookies, url }) => {
@@ -26,7 +35,7 @@ export const actions: Actions = {
 			return fail(401, { email, error: 'Invalid credentials.' });
 		}
 
-		const redirectTo = url.searchParams.get('redirectTo') || '/';
+		const redirectTo = url.searchParams.get('redirectTo') || '/tenants';
 		throw redirect(303, redirectTo);
 	}
 };

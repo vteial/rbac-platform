@@ -67,9 +67,18 @@ editing the top block. The command set that proved useful:
 **Grows into (MVP):** the same recipes wrap CI steps; `env-doctor` becomes a pre-flight
 check in the pipeline.
 
-**A `just` gotcha worth documenting:** on the CLI, `name=value` sets a *variable
-override*, not a recipe *argument*. Use a positional arg for flags (`just stop-local wipe`),
-not `wipe=true`.
+**Gotchas worth documenting (each cost real time on this POC):**
+- **`just` args:** on the CLI, `name=value` sets a *variable override*, not a recipe
+  *argument*. Use a positional arg for flags (`just stop-local wipe`), not `wipe=true`.
+- **Root `.env` vs a sub-app:** when the project `.env` is at the repo root but the app
+  runs from a subdir (e.g. `console/`), the framework often only reads `.env` from its
+  own directory — so root vars silently don't reach the app. Fix at the framework's env
+  root setting (SvelteKit: `kit.env.dir: '..'`; Vite: `envDir`), **not** by copying
+  `.env` around. A `just <app>-dev` recipe should still pass any host-vs-container URL
+  overrides explicitly.
+- **Framework-reserved env prefixes:** some frameworks reserve prefixes for client-exposed
+  vars (SvelteKit strips `PUBLIC_` from the *private* env). Don't prefix a server-read
+  flag `PUBLIC_` — it'll read as undefined. (Also noted in the min-UI-standard proposal.)
 
 ## 3. Proposal B — the living NARRATIVE doc
 

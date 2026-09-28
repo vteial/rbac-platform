@@ -94,11 +94,13 @@ just setup-local         # first run: install safe tools + deps, guide Podman, t
 just start-local         # bring up Postgres + OpenFGA + PocketBase, wait until healthy
 just setup-console-user  # create the console login (PB superuser + console user)
 just seed-local-demo     # seed the demo tenants (Client A + Client B)
-cd console && pnpm dev   # console at http://localhost:5173
+just dev                 # console at http://localhost:5173
 ```
 
-Log in at http://localhost:5173 with the demo console user (`demo@example.com` /
-`demo123456`). Run `just` on its own to list every command.
+Open http://localhost:5173 — you'll land on the public hero page; **Get started → sign
+in**. In demo mode the login page offers a *Fill demo credentials* button
+(`demo@example.com` / `demo123456`). The console has a **light/dark/auto theme switch**
+in the header. Run `just` on its own to list every command.
 
 > For a **clean state** to build your own demo by hand, use `just seed-local` instead
 > of the demo seed. To verify the RBAC logic offline (no server): `cd console && pnpm verify:model`.

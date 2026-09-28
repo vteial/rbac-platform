@@ -361,6 +361,32 @@ Each entry: **Context → Options → Decision → Rationale → Consequences**.
   `docs/NARRATIVE.md` for rbac-platform. The doc is **living** — a §10 change log tracks
   reconciliation between the drafted narrative and what actually shipped.
 
+### ADR-14 — Console meets a minimum UI standard (tokens · theming · landing)
+
+- **Context:** The console was clean but bare — dark-only, informal tokens, no landing
+  page, body/header/footer widths inconsistent, not responsive. The owner wanted a
+  **minimum UI standard** (credible + maintainable) without a product-grade redesign,
+  and wanted the bar to be reusable across future POCs.
+- **Options:** (a) leave it POC-plain; (b) meet a defined minimum bar (T2); (c) full
+  product-grade redesign with a component library (T3).
+- **Decision:** **(b) — the minimum UI standard (T2):** layered design tokens
+  (primitive + semantic; components use semantic only), **light/dark/auto theming**
+  (default auto, no-FOUC, persisted; green accent), a shared content-width container for
+  header/body/footer, responsive down to ~360px, and a **public landing page** (hero +
+  get-started CTA) with the dashboard moved to `/tenants`. Plus flag-gated **demo-mode**
+  affordances (a "fill demo credentials" button). T3 explicitly deferred to graduation.
+- **Rationale:** Formality scales with maturity (the method's ladder applied to UI). The
+  token layering is the keystone — it makes theming and future design-system work possible
+  without rework, and every piece is a forward-compatible subset of its T3 form.
+- **Consequences:** `app.css` rebuilt as a token system; `ThemeSwitch` + no-FOUC script;
+  landing route + routing move (`/` public, `/tenants` = dashboard, hook updated). Two
+  framework gotchas surfaced and fixed: (1) a server-read flag must **not** be `PUBLIC_`-
+  prefixed (SvelteKit strips those from `$env/dynamic/private`) → renamed `DEMO_MODE`;
+  (2) the repo-root `.env` wasn't read because the app runs from `console/` → set
+  **`kit.env.dir: '..'`** so SvelteKit reads the root `.env`, plus a `just dev` recipe for
+  the host-run URL overrides. Captured as a reusable convention in
+  `docs/reference/aidlc/PROPOSAL-min-ui-standard.md`. Spec: `docs/specs/poc-spec-console-ui.md`.
+
 ---
 
 ## 5. Final Architecture
@@ -403,8 +429,11 @@ model from a friendly role editor — clients never write the DSL.
   assign/unassign, check).
 - Role→OpenFGA-model builder (turns a friendly role/permission list into valid
   OpenFGA schema-1.1 JSON).
-- SvelteKit console: login, tenants list/create, per-tenant role editor, user→role
-  assignment, and a live **"test a check"** panel.
+- SvelteKit console: a **public landing page** (`/`), login, tenants dashboard
+  (`/tenants`), per-tenant role editor, user→role assignment, and a live
+  **"test a check"** panel. Meets a **minimum UI standard** (ADR-14): layered design
+  tokens, **light/dark/auto theming** (green accent), responsive, content-width layout,
+  and flag-gated demo-mode affordances.
 - PocketBase auth guard (server hook).
 - Docker Compose for all four services; demo seed for **Client A (parent/child)** and
   **Client B (dev/qa/platform_engineer)**.
@@ -420,8 +449,8 @@ model from a friendly role editor — clients never write the DSL.
   `pnpm seed` creates both tenant stores, publishes models, binds roles, assigns
   users; **direct HTTP checks against the running engine resolve correctly**
   (`esha` deploy ✅, `chandra` deploy ⛔, `divya` test ✅); console dev server serves
-  (`/health` ok, unauthenticated `/` → `/login`). This run **caught and fixed a real
-  bug** — see **ADR-11** (`resource:*` object → `resource:_tenant`).
+  (`/health` ok; unauthenticated protected routes → `/login`). This run **caught and
+  fixed a real bug** — see **ADR-11** (`resource:*` object → `resource:_tenant`).
 
 **Browser walkthrough — owner-validated** *(2026-09-28)*:
 - ✅ The console UI walkthrough (login → tenants → roles → assign → the "test a check"
@@ -465,3 +494,4 @@ model from a friendly role editor — clients never write the DSL.
 | 11 | Tenant-wide resource = `resource:_tenant` (concrete) | `resource:*` (typed wildcard) | Wildcard is illegal in a tuple's object position; sentinel keeps classic RBAC + ADR-1 open |
 | 12 | Local DX layer via `just` (reusable) | pnpm scripts; make | Modern, self-documenting, language-agnostic; encodes host-vs-container URL trap; copies to next POC |
 | 13 | Living `NARRATIVE.md` + animation brief | ad-hoc one-pager | Audience legibility as a first-class artifact; Mermaid feeds downstream animation agent |
+| 14 | Console minimum UI standard (T2) | leave plain; full redesign (T3) | Credible + maintainable without product-grade cost; tokens/theming/landing, all forward-compatible |

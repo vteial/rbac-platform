@@ -77,3 +77,8 @@ seed-local-demo:
 setup-console-user:
     @POCKETBASE_HOST_URL="{{pocketbase_host}}" COMPOSE="{{compose}}" PB_SERVICE="pocketbase" \
         bash scripts/setup-console-user.sh
+
+# Run the console dev server (host-run). Overrides the .env container hostnames
+# with localhost so a host process reaches the stack; reads the rest from .env.
+dev:
+    @cd {{console_dir}} && OPENFGA_API_URL="{{openfga_host}}" POCKETBASE_URL="{{pocketbase_host}}" pnpm dev

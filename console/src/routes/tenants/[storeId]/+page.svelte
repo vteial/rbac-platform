@@ -7,7 +7,7 @@
 	);
 </script>
 
-<p><a href="/" class="muted">← All tenants</a></p>
+<p><a href="/tenants" class="muted">← All tenants</a></p>
 <h1>{data.tenant.name}</h1>
 <p class="sub mono">store: {data.tenant.id}</p>
 
@@ -21,6 +21,7 @@
 	{#if data.roles.length === 0}
 		<p class="muted">No roles defined yet.</p>
 	{:else}
+		<div class="table-wrap">
 		<table>
 			<thead><tr><th>Role</th><th>Grants</th><th></th></tr></thead>
 			<tbody>
@@ -43,6 +44,7 @@
 				{/each}
 			</tbody>
 		</table>
+		</div>
 	{/if}
 
 	<h2>Add / update a role</h2>
@@ -90,6 +92,7 @@
 	{#if form?.unassigned}<p class="notice">Unassigned {form.unassigned}.</p>{/if}
 
 	{#if data.assignments.length > 0}
+		<div class="table-wrap">
 		<table style="margin-top:0.8rem">
 			<thead><tr><th>User</th><th>Role</th><th></th></tr></thead>
 			<tbody>
@@ -108,6 +111,7 @@
 				{/each}
 			</tbody>
 		</table>
+		</div>
 	{/if}
 </div>
 
@@ -145,7 +149,7 @@
 	</form>
 
 	{#if form?.check}
-		<div class="result {form.check.allowed ? 'allow' : 'deny'}" style="margin-top:1rem">
+		<div class="result {form.check.allowed ? 'allow' : 'deny'}" style="margin-top:1rem" role="status" aria-live="polite">
 			{form.check.allowed ? '✅ ALLOWED' : '⛔ DENIED'} —
 			<span class="mono">
 				user:{form.check.userId} · {form.check.permission} ·

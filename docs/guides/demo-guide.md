@@ -104,10 +104,12 @@ engine should resolve exactly this way (✅ = allowed, ⛔ = denied):
 ## 3. Run the console
 
 ```bash
-cd console && pnpm dev      # http://localhost:5173
+just dev      # http://localhost:5173  (host-run, correct URLs, reads root .env)
 ```
 
-Log in with the console user from step 1 (`demo@example.com` / `demo123456` by default).
+You'll land on the public hero page → **Get started**. In demo mode (`DEMO_MODE=true`,
+the local default) the login page shows a **"Fill demo credentials"** button — click it
+to populate `demo@example.com` / `demo123456`, then Sign in. (Or type them.)
 
 ## 4. The demo script (what to show the client)
 

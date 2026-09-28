@@ -10,22 +10,27 @@ import { redirect, type Handle } from '@sveltejs/kit';
 import { config } from '$lib/server/config';
 import { validateToken } from '$lib/server/pocketbase';
 
-const PUBLIC_PATHS = ['/login', '/health'];
+// Public routes: the landing page ('/'), login, and the health check.
+// (Exact-match '/' so it doesn't make every path public.)
+const PUBLIC_PREFIXES = ['/login', '/health'];
+const PUBLIC_EXACT = ['/'];
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const token = event.cookies.get(config.session.cookieName) ?? '';
 	event.locals.user = await validateToken(token);
 
 	const path = event.url.pathname;
-	const isPublic = PUBLIC_PATHS.some((p) => path === p || path.startsWith(p + '/'));
+	const isPublic =
+		PUBLIC_EXACT.includes(path) ||
+		PUBLIC_PREFIXES.some((p) => path === p || path.startsWith(p + '/'));
 
 	if (!event.locals.user && !isPublic) {
 		throw redirect(303, `/login?redirectTo=${encodeURIComponent(path)}`);
 	}
 
-	// Already logged in but sitting on /login -> send to dashboard.
+	// Already logged in but sitting on /login -> send to the dashboard.
 	if (event.locals.user && path === '/login') {
-		throw redirect(303, '/');
+		throw redirect(303, '/tenants');
 	}
 
 	return resolve(event);
