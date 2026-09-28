@@ -53,6 +53,7 @@ Process decisions (POC-level, not in the ADR journal):
 > Things for later — not committed. The shelf.
 
 - Thin API gateway in front of OpenFGA — map API key → store id (clients never see raw store ids), rate-limiting, audit logging.
+- **EPIC — Advanced RBAC/ReBAC (healthcare tenant)** — a *second showcase* on the same platform: a healthcare tenant ("Client C") whose access depends on relationships, engagement, credentials, and consent — not role alone (ReBAC + ABAC touches). Proves advanced capability alongside Epic 1's standard RBAC. Gets its own tenant · narrative · demo guide · client simulator. **Requirements drafted** (no solutioning yet): [`docs/design/epic-advanced-rbac.md`](docs/design/epic-advanced-rbac.md) — next step is to work the § Open Questions, then a modelling design doc, then per-unit specs.
 - **Client integration simulator** — a separate bare-minimal app (one-app-two-configs, Client A/B) that consumes the `check` API for real over the network and shows the request/response inline — the true proof of the POC (vs the console's operator-side inline test). Spec drafted: [`docs/specs/poc-spec-client-simulator.md`](docs/specs/poc-spec-client-simulator.md). Designed to later repoint at the API gateway (below).
 - Object-level / per-resource permissions (`resource:<id>`) — enabled by ADR-1 with no migration; build when a client needs it.
 - Move role-definition persistence from the local JSON store to PocketBase/Postgres for production.
@@ -79,6 +80,7 @@ Process decisions (POC-level, not in the ADR journal):
 - [`docs/specs/poc-spec-local-dx.md`](docs/specs/poc-spec-local-dx.md) — Local DX command layer (`just`). Status: verified.
 - [`docs/specs/poc-spec-console-ui.md`](docs/specs/poc-spec-console-ui.md) — Console minimum UI standard. Status: verified.
 - [`docs/specs/poc-spec-client-simulator.md`](docs/specs/poc-spec-client-simulator.md) — Client integration simulator. Status: **backlog** (drafted, not scheduled).
+- [`docs/design/epic-advanced-rbac.md`](docs/design/epic-advanced-rbac.md) — **Epic** requirements (advanced RBAC/ReBAC healthcare tenant). Status: **requirements — drafting** (open questions pending).
 
 ---
 
