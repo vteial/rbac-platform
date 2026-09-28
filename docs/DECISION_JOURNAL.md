@@ -5,7 +5,7 @@
 > readable by an engineering manager: the executive summary is up top; the
 > detailed decision log (ADR-style) follows.
 
-- **Status:** Design + starter implementation complete; live end-to-end run pending (see §6)
+- **Status:** Design + starter implementation complete; live end-to-end run **done** on Podman (see §6)
 - **Date:** 2026-09-27
 - **Owner / decision-maker:** Project owner — set the problem and constraints, evaluated the
   options presented, and made every final call recorded below.
@@ -132,9 +132,9 @@ Each entry: **Context → Options → Decision → Rationale → Consequences**.
 - **Rationale:** With uncertain future scope, the low-regret choice is the one that
   can't force a painful migration. Zanzibar-style engines treat classic RBAC as the
   simple case of a relationship graph, so there is no extra cost today.
-- **Consequences:** The generated model checks against `resource:*` for tenant-wide
-  (classic) permissions; a concrete `resource:<id>` enables object-level later with
-  no schema migration.
+- **Consequences:** The generated model checks against `resource:_tenant` (a concrete
+  tenant-wide object — see ADR-11) for classic permissions; a concrete `resource:<id>`
+  enables object-level later with no schema migration.
 
 ### ADR-2 — Authorization engine: OpenFGA (over Permify)
 
@@ -269,6 +269,39 @@ Each entry: **Context → Options → Decision → Rationale → Consequences**.
   `adapter-vercel` at deploy time. Before any non-local exposure: enable OpenFGA
   `preshared` key auth + TLS. Tracked in `POC-LOG.md` § Ideas until scheduled.
 
+### ADR-11 — Tenant-wide resource is a concrete object (`resource:_tenant`), not a typed wildcard
+
+- **Context:** The starter bound each role to the tenant-wide resource using the
+  object `resource:*`, and ran classic checks against `resource:*`. This passed the
+  offline decision-logic verifier (`verify:model`, 11/11) but had never been exercised
+  against a live OpenFGA server (the open item in §6).
+- **Trigger:** The first live end-to-end run (`docker compose up` on Podman + `pnpm
+  seed`) failed on the very first `write`: *"Invalid tuple
+  'resource:\*#role_parent@role:parent'. Reason: the 'object' field cannot reference a
+  typed wildcard."* OpenFGA permits a typed wildcard (`type:*`) only in the **user**
+  position of a tuple, never the **object** position.
+- **Options:** (a) declare `resource` with wildcard support and keep `resource:*` — not
+  possible, the constraint is on the tuple object field, not the model; (b) use a
+  concrete sentinel object id for the tenant-wide resource; (c) require callers to
+  always pass a concrete resource id (drops the classic "tenant-wide" convenience).
+- **Decision:** **(b)** — the tenant-wide resource is a concrete object,
+  `resource:_tenant`, defined once as an exported constant
+  (`TENANT_WIDE_RESOURCE_ID`) and used consistently for bindings, assignments-time
+  checks, and runtime checks.
+- **Rationale:** Preserves the classic-RBAC "does user have permission" convenience
+  (no per-object setup) while staying within OpenFGA's tuple rules. It does **not**
+  disturb ADR-1: object-level permissions later still use concrete `resource:<id>`
+  objects with no model migration — `_tenant` is simply the reserved id for the
+  tenant-wide case.
+- **Consequences:** `model-builder.ts` (`tenantWideRoleBindings` +
+  `TENANT_WIDE_RESOURCE_ID`), `openfga.ts` (`checkPermission` default object),
+  `scripts/seed.ts`, and `scripts/verify-model.ts` all reference `resource:_tenant`.
+  **Process lesson:** the offline verifier evaluates the model logic in-memory and
+  does not call the real write/check API, so it could not catch an engine-level tuple
+  constraint — only "verify by running it" did. Verified live: `pnpm seed` completes
+  end-to-end; direct HTTP checks resolve correctly (`esha` deploy ✅, `chandra` deploy
+  ⛔, `divya` test ✅); `pnpm check` 0 errors; `verify:model` still 11/11.
+
 ---
 
 ## 5. Final Architecture
@@ -297,10 +330,10 @@ Each entry: **Context → Options → Decision → Rationale → Consequences**.
 
 **How a role maps to the model:** a user is granted a role
 (`user:<id> assignee role:<name>`); a role grants permissions on the tenant-wide
-resource (`role:<name> role_<name> resource:*`); each permission is defined as
-"assignee from any granting role", so `check(user, permission, resource:*)` is true
-iff the user holds a role that grants it. The console generates this OpenFGA model
-from a friendly role editor — clients never write the DSL.
+resource (`role:<name> role_<name> resource:_tenant`); each permission is defined as
+"assignee from any granting role", so `check(user, permission, resource:_tenant)` is
+true iff the user holds a role that grants it. The console generates this OpenFGA
+model from a friendly role editor — clients never write the DSL.
 
 ---
 
@@ -323,14 +356,18 @@ from a friendly role editor — clients never write the DSL.
 - ✅ **RBAC decision logic proven offline** — an evaluator run against the generated
   model passes **all 11 allow/deny cases** (e.g. platform-engineer can `deploy`,
   developer cannot; QA can `test`, cannot `deploy`).
+- ✅ **Live end-to-end run on Podman** *(2026-09-28)* — full stack up via Docker
+  Compose v2 (Postgres + OpenFGA + PocketBase, all healthy; migrate exited clean);
+  `pnpm seed` creates both tenant stores, publishes models, binds roles, assigns
+  users; **direct HTTP checks against the running engine resolve correctly**
+  (`esha` deploy ✅, `chandra` deploy ⛔, `divya` test ✅); console dev server serves
+  (`/health` ok, unauthenticated `/` → `/login`). This run **caught and fixed a real
+  bug** — see **ADR-11** (`resource:*` object → `resource:_tenant`).
 
-**Not yet verified (open item):**
-- ⚠️ A **live end-to-end run** (console → OpenFGA HTTP round-trip against a running
-  server + Postgres) was **not executed** in the build environment due to sandbox
-  limits on long-running server processes. The path is designed to work and the SDK
-  usage matches the documented API, but this hop should be confirmed by running
-  `docker compose up` (routed to Podman) + `pnpm seed` on the dev machine before the
-  client demo — see `docs/DEVELOPMENT_GUIDE.md`.
+**Remaining (interactive, owner-side):**
+- 🔎 Browser walkthrough of the console UI (login → tenants → roles → assign → the
+  "test a check" panel). All server-side plumbing behind it is confirmed working;
+  this is the visual confirmation.
 
 ---
 
@@ -365,3 +402,4 @@ from a friendly role editor — clients never write the DSL.
 | 8 | pnpm (via corepack) | npm, yarn, bun | Machine standard; faster, hard-linked store; pinned/reproducible |
 | 9 | Podman + Docker Compose v2 CLI | Docker Desktop; podman-compose | Machine standard; Compose v2 honors health gates podman-compose misses |
 | 10 | Fly.io (backends) + Vercel (console) | all-Vercel; all-Fly | Matches machine deploy triad + prior Fly/PocketBase experience |
+| 11 | Tenant-wide resource = `resource:_tenant` (concrete) | `resource:*` (typed wildcard) | Wildcard is illegal in a tuple's object position; sentinel keeps classic RBAC + ADR-1 open |

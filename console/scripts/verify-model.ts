@@ -10,7 +10,14 @@
  * It's a fast, deterministic guard that the generated model + tuples yield
  * the correct allow/deny decisions.
  */
-import { buildRbacModel, tenantWideRoleBindings, type RoleDefinition } from '../src/lib/server/model-builder';
+import {
+	buildRbacModel,
+	tenantWideRoleBindings,
+	TENANT_WIDE_RESOURCE_ID,
+	type RoleDefinition
+} from '../src/lib/server/model-builder';
+
+const TENANT_RESOURCE = `resource:${TENANT_WIDE_RESOURCE_ID}`;
 
 type Tuple = { user: string; relation: string; object: string };
 
@@ -39,11 +46,7 @@ function evaluate(
 		const boundRoles = tuples
 			.filter((t) => t.relation === rel && t.object === q.object && t.user.startsWith('role:'))
 			.map((t) => t.user); // e.g. role:dev
-		// Also honor wildcard object binding resource:* for tenant-wide checks.
-		const wildcardBound = tuples
-			.filter((t) => t.relation === rel && t.object === 'resource:*' && t.user.startsWith('role:'))
-			.map((t) => t.user);
-		for (const roleObj of [...boundRoles, ...wildcardBound]) {
+		for (const roleObj of boundRoles) {
 			const isAssignee = tuples.some(
 				(t) => t.relation === 'assignee' && t.object === roleObj && t.user === q.user
 			);
@@ -117,7 +120,7 @@ for (const c of CASES) {
 		const got = evaluate(c.roles, tuples, {
 			user: `user:${e.user}`,
 			permission: e.permission,
-			object: 'resource:*'
+			object: TENANT_RESOURCE
 		});
 		const ok = got === e.allow;
 		if (!ok) failures++;

@@ -29,6 +29,7 @@ Index of decisions of record (details in `docs/DECISION_JOURNAL.md`):
 - **ADR-8** — Package manager = **pnpm** (via corepack) — machine standard.
 - **ADR-9** — Container engine = **Podman**, prefer **Docker Compose v2 CLI** (honors health gates podman-compose misses).
 - **ADR-10** — Deploy direction = **Fly.io** (backends) + **Vercel** (console).
+- **ADR-11** — Tenant-wide resource = concrete **`resource:_tenant`**, not a typed wildcard (`resource:*` is illegal in a tuple's object position).
 
 Process decisions (POC-level, not in the ADR journal):
 - **D-P1 — Adopt Mini-AIDLC** *(2026-09-27)* — Trigger: owner wants a repeatable, graduation-ready process · Options: (a) copy scaffold as-is / (b) adopt but reference existing docs · **Chose (b), scaffold at repo root, because we already have a richer `docs/DECISION_JOURNAL.md` and want one source of truth — mini `§ Decisions` points to it rather than duplicating.**
@@ -39,7 +40,7 @@ Process decisions (POC-level, not in the ADR journal):
 
 | Item | State | Note |
 | :--- | :---: | :--- |
-| Live end-to-end verification (`docker compose up` + `pnpm seed`, on Podman) | todo | Not run in the build sandbox (long-running server SIGKILLed); confirm console→OpenFGA round-trip + checks resolve on the dev machine. This is the one open verification gap. |
+| Live end-to-end verification (`docker compose up` + `pnpm seed`, on Podman) | done | Approved by owner 2026-09-28. Ran on Podman via Compose v2 — caught & fixed a real bug (`resource:*` object → `resource:_tenant`, ADR-11); seed completes end-to-end, live HTTP checks resolve (`esha` deploy ✅, `chandra` ⛔, `divya` test ✅). Browser UI walkthrough left to owner-side validation. |
 | Reorg repo so root talks about project+process (AGENTS.md + scaffold → docs/reference/aidlc) | done | Approved by owner 2026-09-28 (commit `bb77c1c`). |
 | Align toolchain to iMac M3 standard (pnpm · Podman · dev guide · ADRs) | done | Approved by owner 2026-09-28 (commits `48093bc`+`d693b97`). |
 | Adopt Mini-AIDLC process (KICKSTART + POC-LOG + MIGRATION + graduate skill) | done | Landed in commit `fd326cd`. |
@@ -55,6 +56,7 @@ Process decisions (POC-level, not in the ADR journal):
 ## § Shipped  → seeds `CHANGELOG.md` (carry forward as history)
 > What works, newest first — with the **eyeball-verify** note (the human-gate record at POC speed).
 
+- *(2026-09-28)* **Live end-to-end verification on Podman — and a real-bug fix** — brought the full stack up via **Docker Compose v2 routed to Podman** (Postgres + OpenFGA + PocketBase, all healthy; migrate exited clean, health-gate ordering honored), then ran `pnpm seed`. The live run **caught a bug the offline verifier could not**: roles were bound to the tenant-wide resource using the object `resource:*`, but OpenFGA rejects a typed wildcard in a tuple's *object* position. Fixed by switching to a concrete sentinel object `resource:_tenant` (exported `TENANT_WIDE_RESOURCE_ID`, threaded through `model-builder.ts` · `openfga.ts` · `seed.ts` · `verify-model.ts`) — **ADR-11**; ADR-1's object-level path stays open, no model migration. Verified: `pnpm seed` completes end-to-end (2 stores, models, bindings, assignments); **direct HTTP checks against the running engine** resolve `esha` deploy ✅ / `chandra` deploy ⛔ / `divya` test ✅; console dev server serves (`/health` ok, unauth `/` → `/login`); `pnpm check` **0 errors**; `verify:model` still **11/11**. Docs updated (`DECISION_JOURNAL.md`, `CLIENT_INTEGRATION.md`) · approved by owner (2026-09-28). ⚠️ Browser UI walkthrough left to owner-side validation.
 - *(2026-09-28)* **Repo reorg — root talks about project + process** — added root **`AGENTS.md`** (industry-standard agent entry point) and removed the confusing `KIRO_KICKSTART.md`; moved the Mini-AIDLC scaffold (KICKSTART, MIGRATION, POC-SPEC.template, skills/graduate) → **`docs/reference/aidlc/`** via `git mv`. Root now = `AGENTS.md` · `README.md` · `POC-LOG.md`. Verified: git detected all moves as renames (history preserved), **zero dangling links** (re-grepped), all cross-links fixed · approved by owner (2026-09-28).
 - *(2026-09-28)* **Toolchain aligned to iMac M3 standard** — console npm→**pnpm** (corepack-pinned `pnpm@10.27.0`, `pnpm-lock.yaml`, Dockerfile + docs updated); `docker-compose.yml` hardened for **Podman** (self-heal `restart` + Compose-v2-preferred note; health gates kept); new **`docs/DEVELOPMENT_GUIDE.md`**; **ADR-8/9/10** recorded. Verified: `pnpm build` clean, `pnpm check` 0 errors, `pnpm verify:model` **11/11** pass under pnpm; compose YAML validated · approved by owner (2026-09-28).
 - *(2026-09-27)* **Decision Journal + One-Pager** (`docs/DECISION_JOURNAL.md`, `docs/ONE_PAGER.md`) — ADR-style record of all 8 decisions + slide summary. Verified: rendered/reviewed on GitHub · approved by owner.

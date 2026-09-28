@@ -17,8 +17,12 @@
  *       define <permission>: assignee from <grantingRole>, ...
  *
  * A user gets a permission on a resource if they are the `assignee` of a role
- * that grants that permission. Roles are checked against `resource:*` for the
- * tenant-wide (classic) case.
+ * that grants that permission. Roles are bound to a concrete tenant-wide
+ * resource object (`resource:_tenant`) for the classic case.
+ *
+ * NOTE: OpenFGA's typed wildcard (`resource:*`) is only valid in the *user*
+ * position of a tuple, never the *object* position. So the tenant-wide
+ * resource is a concrete sentinel object id, not a wildcard.
  *
  * ── Object-level later (no migration needed) ─────────────────────────────
  * The same shape extends to per-object permissions: create concrete
@@ -26,6 +30,17 @@
  * definitions below already support that because permissions are computed
  * from the `assignee` relation of granting roles.
  */
+
+/**
+ * The concrete object id representing the tenant-wide (classic RBAC) resource.
+ *
+ * OpenFGA only allows a typed wildcard (`resource:*`) in the *user* position of
+ * a tuple — using it as an *object* is rejected ("the 'object' field cannot
+ * reference a typed wildcard"). So the tenant-wide resource is this concrete
+ * sentinel id. Object-level permissions later use concrete `resource:<id>`
+ * objects (no model migration — ADR-1).
+ */
+export const TENANT_WIDE_RESOURCE_ID = '_tenant';
 
 export interface RoleDefinition {
 	/** Machine name, e.g. "dev", "qa", "platform_engineer", "parent", "child". */
@@ -92,7 +107,7 @@ export function buildRbacModel(roles: RoleDefinition[]): AuthorizationModel {
 	const resourceMetadata: TypeDefinition['metadata'] = { relations: {} };
 
 	// First declare a relation per role on the resource so we can attach a role
-	// object to a resource (needed for tenant-wide `resource:*` and object-level).
+	// object to a resource (needed for the tenant-wide resource and object-level).
 	for (const role of roles) {
 		const rel = `role_${role.name}`;
 		resourceRelations[rel] = { this: {} };
@@ -129,7 +144,7 @@ export function buildRbacModel(roles: RoleDefinition[]): AuthorizationModel {
 
 /**
  * When publishing a model we also need to wire each role to the tenant-wide
- * resource `resource:*` so that a plain "does user have permission" check
+ * resource `resource:_tenant` so that a plain "does user have permission" check
  * works without per-object setup. Returns the tuples to write.
  */
 export function tenantWideRoleBindings(
@@ -138,6 +153,6 @@ export function tenantWideRoleBindings(
 	return roles.map((r) => ({
 		user: `role:${r.name}`,
 		relation: `role_${r.name}`,
-		object: 'resource:*'
+		object: `resource:${TENANT_WIDE_RESOURCE_ID}`
 	}));
 }

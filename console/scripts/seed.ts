@@ -10,7 +10,14 @@
  * Requires OpenFGA reachable at OPENFGA_API_URL (default http://localhost:8080).
  */
 import { OpenFgaClient } from '@openfga/sdk';
-import { buildRbacModel, tenantWideRoleBindings, type RoleDefinition } from '../src/lib/server/model-builder';
+import {
+	buildRbacModel,
+	tenantWideRoleBindings,
+	TENANT_WIDE_RESOURCE_ID,
+	type RoleDefinition
+} from '../src/lib/server/model-builder';
+
+const TENANT_RESOURCE = `resource:${TENANT_WIDE_RESOURCE_ID}`;
 
 const API_URL = process.env.OPENFGA_API_URL ?? 'http://localhost:8080';
 const API_TOKEN = process.env.OPENFGA_API_TOKEN ?? '';
@@ -101,7 +108,7 @@ async function seedTenant(s: Seed) {
 	// Persist role-definition metadata so the console UI displays it.
 	await setRoles(storeId, s.roles);
 
-	// Bind each role to the tenant-wide resource `resource:*`.
+	// Bind each role to the tenant-wide resource `resource:_tenant`.
 	const bindings = tenantWideRoleBindings(s.roles);
 	try {
 		await client.write({ writes: bindings }, { authorizationModelId: modelId });
@@ -109,7 +116,7 @@ async function seedTenant(s: Seed) {
 		const msg = err instanceof Error ? err.message : String(err);
 		if (!/already exists|duplicate/i.test(msg)) throw err;
 	}
-	console.log(`  · bound ${bindings.length} roles to resource:*`);
+	console.log(`  · bound ${bindings.length} roles to ${TENANT_RESOURCE}`);
 
 	// Assign sample users to roles.
 	const writes = s.assignments.map((a) => ({
@@ -135,7 +142,7 @@ async function seedTenant(s: Seed) {
 		const missing = allPerms.find((p) => !role.permissions.includes(p));
 		for (const perm of [has, missing].filter(Boolean) as string[]) {
 			const res = await client.check(
-				{ user: `user:${a.user}`, relation: perm, object: 'resource:*' },
+				{ user: `user:${a.user}`, relation: perm, object: TENANT_RESOURCE },
 				{ authorizationModelId: modelId }
 			);
 			samples.push([`${a.user}`, perm, Boolean(res.allowed)]);
@@ -143,7 +150,7 @@ async function seedTenant(s: Seed) {
 	}
 	console.log('  · sample checks:');
 	for (const [user, perm, allowed] of samples) {
-		console.log(`      ${allowed ? '✅' : '⛔'} user:${user} can "${perm}" on resource:*`);
+		console.log(`      ${allowed ? '✅' : '⛔'} user:${user} can "${perm}" on ${TENANT_RESOURCE}`);
 	}
 }
 

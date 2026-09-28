@@ -10,7 +10,12 @@
  */
 import { OpenFgaClient, type TupleKey } from '@openfga/sdk';
 import { config } from './config';
-import { buildRbacModel, tenantWideRoleBindings, type RoleDefinition } from './model-builder';
+import {
+	buildRbacModel,
+	tenantWideRoleBindings,
+	TENANT_WIDE_RESOURCE_ID,
+	type RoleDefinition
+} from './model-builder';
 
 /** A base client with no store bound — used for store list/create. */
 function baseClient(): OpenFgaClient {
@@ -91,7 +96,7 @@ export async function publishRoleModel(
 	const res = await client.writeAuthorizationModel(model);
 	const modelId = res.authorization_model_id!;
 
-	// Bind each role to the tenant-wide resource `resource:*` so a classic
+	// Bind each role to the tenant-wide resource `resource:_tenant` so a classic
 	// "does user have permission" check works without per-object setup.
 	// Writes are idempotent-ish: ignore "already exists" style errors.
 	const bindings = tenantWideRoleBindings(roles);
@@ -175,9 +180,9 @@ export async function listAssignments(
  * The core runtime question a client asks:
  *   "Can user <userId> perform <permission> on <resourceType>[:<resourceId>]?"
  *
- * For classic RBAC we check against the resource type instance
- * `<resourceType>:*` (the tenant-wide resource). When object-level
- * permissions are later introduced, callers pass a concrete resourceId.
+ * For classic RBAC we check against the tenant-wide resource instance
+ * `<resourceType>:_tenant`. When object-level permissions are later
+ * introduced, callers pass a concrete resourceId.
  */
 export async function checkPermission(
 	storeId: string,
@@ -189,7 +194,7 @@ export async function checkPermission(
 	}
 ): Promise<boolean> {
 	const client = storeClient(storeId);
-	const object = `${params.resourceType}:${params.resourceId ?? '*'}`;
+	const object = `${params.resourceType}:${params.resourceId ?? TENANT_WIDE_RESOURCE_ID}`;
 	const res = await client.check({
 		user: `user:${params.userId}`,
 		relation: params.permission,

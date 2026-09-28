@@ -11,6 +11,10 @@ console you give them:
 The one call their system makes at runtime is **Check**:
 > "Can `user:<id>` do `<permission>` on `resource:<id>`?"
 
+> **Tenant-wide resource id:** classic RBAC checks use the concrete object
+> `resource:_tenant`. (OpenFGA's typed wildcard `resource:*` is only valid in the
+> *user* position of a tuple, not as an *object* — see ADR-11.)
+
 ---
 
 ## Mode (a) — Direct HTTP (no SDK, any language)
@@ -23,14 +27,14 @@ curl -X POST "$OPENFGA_API_URL/stores/$STORE_ID/check" \
     "tuple_key": {
       "user": "user:esha",
       "relation": "deploy",
-      "object": "resource:*"
+      "object": "resource:_tenant"
     }
   }'
 # => { "allowed": true }
 ```
 
-`resource:*` = the tenant-wide (classic RBAC) resource. For object-level checks
-later, replace `*` with a concrete id, e.g. `resource:project-42`.
+`resource:_tenant` = the tenant-wide (classic RBAC) resource. For object-level
+checks later, replace `_tenant` with a concrete id, e.g. `resource:project-42`.
 
 Authentication:
 - If you run OpenFGA with `OPENFGA_AUTHN_METHOD=none` (local demo), omit the
@@ -60,7 +64,7 @@ const fga = new OpenFgaClient({
 const { allowed } = await fga.check({
   user: 'user:esha',
   relation: 'deploy',
-  object: 'resource:*'
+  object: 'resource:_tenant'
 });
 ```
 
@@ -75,7 +79,7 @@ config = ClientConfiguration(
 )
 async with OpenFgaClient(config) as fga:
     resp = await fga.check(ClientCheckRequest(
-        user="user:esha", relation="deploy", object="resource:*",
+        user="user:esha", relation="deploy", object="resource:_tenant",
     ))
     print(resp.allowed)
 ```
@@ -98,9 +102,9 @@ For the demo and small deployments, direct access (mode a/b) is perfectly fine.
 
 - A user is granted a role: `user:<id>  assignee  role:<roleName>`
 - A role grants permissions on the tenant-wide resource: the console binds
-  `role:<roleName>  role_<roleName>  resource:*`
+  `role:<roleName>  role_<roleName>  resource:_tenant`
 - A permission relation on `resource` is defined as "assignee from any granting
-  role", so `check(user, permission, resource:*)` returns `true` iff the user
+  role", so `check(user, permission, resource:_tenant)` returns `true` iff the user
   holds a role that grants that permission.
 
 This is generated for you by the console's role editor — clients never write the
