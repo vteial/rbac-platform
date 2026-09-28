@@ -26,10 +26,25 @@ docker compose ps                                   # wait until healthy
 
 ## 1. Create the console admin (one-time)
 
+```bash
+just setup-console-user
+```
+
+One command, idempotent. It creates both logins with **demo defaults** (from `.env`,
+override there — local demo only):
+
+| Login | URL | Default email | Default password |
+|---|---|---|---|
+| **PocketBase admin** | http://localhost:8090/_/ | `admin@example.com` | `changeme123` |
+| **Console** | http://localhost:5173 | `demo@example.com` | `demo123456` |
+
+<details><summary>By hand instead (PocketBase UI)</summary>
+
 1. Open the PocketBase admin UI: **http://localhost:8090/_/**
 2. Create the first **superuser** (this is the PB admin, not a console user).
-3. In PocketBase, open the **`users`** collection → **New record** → set an email +
-   password. This is your **console login**.
+3. Open the **`users`** collection → **New record** → set an email + password.
+   This is your **console login**.
+</details>
 
 ## 2. Seed the demo tenants
 
@@ -64,7 +79,7 @@ The seed also prints sample checks so you can see it working before touching the
 cd console && pnpm dev      # http://localhost:5173
 ```
 
-Log in with the console user you created in step 1.
+Log in with the console user from step 1 (`demo@example.com` / `demo123456` by default).
 
 ## 4. The demo script (what to show the client)
 

@@ -62,6 +62,7 @@ just setup-local   # FIRST RUN: install safe tools + deps, guide Podman, then au
 just env-doctor    # audit the machine (tools, ports, .env) BEFORE anything runs
 just start-local   # bring backends up + wait for healthy
 just validate-local # probe running services
+just setup-console-user # create the console login (PB superuser + console user)
 just seed-local        # clean state: one tenant, drive the app by hand
 just seed-local-demo   # demo state: Client A + Client B showcase
 just stop-local        # stop (or 'just stop-local wipe' to drop volumes)

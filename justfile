@@ -5,12 +5,17 @@
 #   just env-doctor   # audit the machine (before anything runs)
 #   just start-local  # bring services up
 #   just validate-local
+#   just setup-console-user # create the console login (PB superuser + user)
 #   just seed-local        # clean state (drive the app by hand)
 #   just seed-local-demo   # demo state (pre-baked showcase)
 #   just stop-local        # (or 'just stop-local wipe' to also drop volumes)
 #
 # REUSABLE ACROSS POCs: edit the variable block below, copy this file + scripts/.
 # Spec: docs/specs/poc-spec-local-dx.md
+
+# Load .env so recipes see its values (e.g. demo creds); don't fail if absent.
+set dotenv-load := true
+set dotenv-required := false
 
 # ── repo-specific config (edit these per POC) ────────────────────────────────
 compose        := "docker compose"          # Compose v2 CLI, routed to Podman
@@ -67,3 +72,8 @@ seed-local:
 # Seed a DEMO state: the pre-baked Client A / Client B showcase.
 seed-local-demo:
     @cd {{console_dir}} && OPENFGA_API_URL="{{openfga_host}}" OPENFGA_API_TOKEN="" pnpm seed:local:demo
+
+# Create the console login: PB superuser (:8090/_/) + console user (:5173), demo creds from .env.
+setup-console-user:
+    @POCKETBASE_HOST_URL="{{pocketbase_host}}" COMPOSE="{{compose}}" PB_SERVICE="pocketbase" \
+        bash scripts/setup-console-user.sh

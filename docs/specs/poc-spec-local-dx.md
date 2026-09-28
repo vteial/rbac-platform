@@ -30,6 +30,7 @@ Six commands:
 | `just stop-local` | Stop the services (opt-in volume wipe). |
 | `just seed-local` | Seed a **clean state** — minimal master data, usable by hand. |
 | `just seed-local-demo` | Seed a **demo state** — the pre-baked Client A / Client B showcase. |
+| `just setup-console-user` | Create the console login (PB superuser + `users` record), demo creds. |
 
 ## Acceptance (how we'll know it works)  → seeds the EARS Definition of Done
 - [ ] `just --list` shows all recipes with one-line help each.
