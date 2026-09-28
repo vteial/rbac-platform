@@ -83,6 +83,24 @@ The demo seed creates:
 
 The seed also prints sample checks so you can see it working before touching the UI.
 
+### Capability matrix (expected check results)
+
+Keep this handy during the "test a check" step — every ✅/⛔ below is a check the
+engine should resolve exactly this way (✅ = allowed, ⛔ = denied):
+
+**Client A**
+| Role | User | read | write | manage_children |
+| :--- | :--- | :---: | :---: | :---: |
+| parent | anita | ✅ | ✅ | ✅ |
+| child | bala | ✅ | ⛔ | ⛔ |
+
+**Client B**
+| Role | User | read | write | test | deploy |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| platform_engineer | esha | ✅ | ✅ | ✅ | ✅ |
+| dev | chandra | ✅ | ✅ | ⛔ | ⛔ |
+| qa | divya | ✅ | ⛔ | ✅ | ⛔ |
+
 ## 3. Run the console
 
 ```bash

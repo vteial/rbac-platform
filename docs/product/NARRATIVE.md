@@ -123,17 +123,41 @@ Ask *"can esha deploy?"* → **yes.** Ask the same of `chandra`, a developer →
 ```mermaid
 flowchart LR
   subgraph CA["Client A (store)"]
-    RA1[role: parent] --> PA1[read, write, manage_children]
-    RA2[role: child] --> PA2[read]
+    anita[user: anita] --> RA1[role: parent]
+    bala[user: bala] --> RA2[role: child]
+    RA1 --> PA1[read, write, manage_children]
+    RA2 --> PA2[read]
   end
   subgraph CB["Client B (store)"]
-    RB1[role: platform_engineer] --> PB1[read, write, test, deploy]
-    RB2[role: dev] --> PB2[read, write]
-    RB3[role: qa] --> PB3[read, test]
+    esha[user: esha] --> RB1[role: platform_engineer]
+    chandra[user: chandra] --> RB2[role: dev]
+    divya[user: divya] --> RB3[role: qa]
+    RB1 --> PB1[read, write, test, deploy]
+    RB2 --> PB2[read, write]
+    RB3 --> PB3[read, test]
   end
-  esha[user: esha] --> RB1
-  chandra[user: chandra] --> RB2
 ```
+
+Both tenants have users (from the demo seed); the walkthrough happens to follow
+`esha` and `chandra` at Client B, but Client A's `anita`/`bala` work identically.
+
+**Capability matrix — who can do what** (✅ granted · — not granted):
+
+*Client A*
+| Role | User | read | write | manage_children |
+| :--- | :--- | :---: | :---: | :---: |
+| parent | anita | ✅ | ✅ | ✅ |
+| child | bala | ✅ | — | — |
+
+*Client B*
+| Role | User | read | write | test | deploy |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| platform_engineer | esha | ✅ | ✅ | ✅ | ✅ |
+| dev | chandra | ✅ | ✅ | — | — |
+| qa | divya | ✅ | — | ✅ | — |
+
+Each ✅ is a `check(user, permission, resource:_tenant)` the engine answers `true`;
+each — answers `false`. The demo's "test a check" panel resolves exactly this grid.
 
 ## 7. Walkthrough as Proof
 
