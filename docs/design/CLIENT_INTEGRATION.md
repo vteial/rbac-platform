@@ -1,5 +1,13 @@
 # Client Integration — Consuming the RBAC API
 
+[README](../../README.md) › [Docs](../README.md) › Design › **Client Integration**
+
+## Contents
+- [Mode (a) — Direct HTTP](#mode-a--direct-http-no-sdk-any-language)
+- [Mode (b) — OpenFGA SDK](#mode-b--openfga-sdk-in-the-clients-stack)
+- [Recommended production shape](#recommended-production-shape)
+- [How a permission maps to the model](#how-a-permission-maps-to-the-model)
+
 Each client organization is an OpenFGA **store**. Once you onboard them in the
 console you give them:
 

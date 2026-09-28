@@ -115,7 +115,7 @@ flowchart LR
 | 1 | ⟨action in the app⟩ | ⟨which claim⟩ |
 | 2 | ⟨action⟩ | ⟨claim⟩ |
 
-→ Literal click-path with commands: [`DEMO.md`](../DEMO.md).
+→ Literal click-path with commands: [`DEMO.md`](../../guides/DEMO.md).
 
 ## 8. What It Is / Isn't
 > Kills misunderstanding fast — the audience's likely wrong assumptions, corrected.

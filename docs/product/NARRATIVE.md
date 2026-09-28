@@ -1,19 +1,21 @@
 # Multi-Tenant RBAC-as-a-Service — Narrative
 
+[README](../../README.md) › [Docs](../README.md) › Product › **Narrative**
+
 > The **audience-facing story** of this POC. It does not restate technical rationale
-> (that's [`DECISION_JOURNAL.md`](./DECISION_JOURNAL.md)) or live status (that's
-> [`../POC-LOG.md`](../POC-LOG.md)) — it links to them. It is **living**: drafted at
+> (that's [`DECISION_JOURNAL.md`](../design/DECISION_JOURNAL.md)) or live status (that's
+> [`POC-LOG.md`](../../POC-LOG.md)) — it links to them. It is **living**: drafted at
 > kickoff, reconciled to the implementation. It doubles as the **brief** for a
 > downstream agent that turns it into a short animated explainer — see
-> [§9](#9-animation-brief). Convention: [`POC-NARRATIVE.template.md`](./reference/aidlc/POC-NARRATIVE.template.md).
+> [§9](#9-animation-brief). Convention: [`POC-NARRATIVE.template.md`](../reference/aidlc/POC-NARRATIVE.template.md).
 
 | Field | Value |
 | :--- | :--- |
 | **POC** | rbac-platform — self-hosted multi-tenant RBAC-as-a-Service |
 | **One-line** | One self-hosted service that lets *any* client organization define *its own* roles and answer "can this user do this?" over an API. |
 | **Audience** | A prospective client (and their engineers) who need to trust one platform to run *their* access rules. |
-| **Status** | building — core verified live; narrative drafted, to be reconciled as features land |
-| **Companions** | Decisions → [`DECISION_JOURNAL.md`](./DECISION_JOURNAL.md) · Live state → [`../POC-LOG.md`](../POC-LOG.md) · Click-path → [`DEMO.md`](./DEMO.md) |
+| **Status** | reconciled — core verified live, demo walkthrough owner-validated (2026-09-28); updated as new features land |
+| **Companions** | Decisions → [`DECISION_JOURNAL.md`](../design/DECISION_JOURNAL.md) · Live state → [`POC-LOG.md`](../../POC-LOG.md) · Click-path → [`DEMO.md`](../guides/DEMO.md) |
 
 ---
 
@@ -101,12 +103,12 @@ flowchart TD
 **The moving parts** (the *why* lives in the Decision Journal):
 | Part | What it does | Decision |
 | :--- | :--- | :--- |
-| **OpenFGA** | The authorization engine — stores roles and answers checks | [ADR-2](./DECISION_JOURNAL.md) |
-| **One store per tenant** | Each client's private, isolated space with its own roles | [ADR-3](./DECISION_JOURNAL.md) |
-| **SvelteKit console** | Point-and-click role onboarding; keeps secrets server-side | [ADR-4](./DECISION_JOURNAL.md) |
-| **PocketBase** | Logs the operator into the console | [ADR-6](./DECISION_JOURNAL.md) |
-| **PostgreSQL + Compose** | Data store + one-command self-hosted run | [ADR-7](./DECISION_JOURNAL.md) |
-| **`resource:_tenant`** | The tenant-wide resource classic checks run against | [ADR-11](./DECISION_JOURNAL.md) |
+| **OpenFGA** | The authorization engine — stores roles and answers checks | [ADR-2](../design/DECISION_JOURNAL.md) |
+| **One store per tenant** | Each client's private, isolated space with its own roles | [ADR-3](../design/DECISION_JOURNAL.md) |
+| **SvelteKit console** | Point-and-click role onboarding; keeps secrets server-side | [ADR-4](../design/DECISION_JOURNAL.md) |
+| **PocketBase** | Logs the operator into the console | [ADR-6](../design/DECISION_JOURNAL.md) |
+| **PostgreSQL + Compose** | Data store + one-command self-hosted run | [ADR-7](../design/DECISION_JOURNAL.md) |
+| **`resource:_tenant`** | The tenant-wide resource classic checks run against | [ADR-11](../design/DECISION_JOURNAL.md) |
 
 ## 6. The Running Example
 
@@ -145,7 +147,7 @@ The demo *is* the proof. Each beat answers a claim from above.
 | 4 | Add a `viewer` role live, assign a user, check it | Self-service onboarding of arbitrary roles (§4) |
 | 5 | The same check as a plain HTTP call | Consumed as an API by the client's own system (§4) |
 
-→ Literal click-path with commands: [`DEMO.md`](./DEMO.md).
+→ Literal click-path with commands: [`DEMO.md`](../guides/DEMO.md).
 
 ## 8. What It Is / Isn't
 
@@ -173,11 +175,12 @@ The demo *is* the proof. Each beat answers a claim from above.
   | 4 | §6–§7 | `esha` asks "can I deploy?" → green YES; `chandra` asks → red NO | "Their app just asks. The answer comes back — yes, or no." |
   | 5 | §4 | Same answer shown as a plain API call | "It's an API. Their system asks; ours answers." |
 - **Assets provided:** the five Mermaid diagrams above (renderable to SVG), this doc,
-  and a screen recording of the [`DEMO.md`](./DEMO.md) click-path if available.
+  and a screen recording of the [`DEMO.md`](../guides/DEMO.md) click-path if available.
 - **Prompt guidance:** use "authorization," avoid "login/identity." Keep the two-client
   contrast central. Do not imply cloud-hosting — it's self-hosted.
 - **Do-not-say (honesty to status):** don't claim production-hardening (auth/TLS on the
-  API and the gateway are still on the [`../POC-LOG.md`](../POC-LOG.md) § Ideas shelf).
+  API and the gateway are still on the [`POC-LOG.md`](../../POC-LOG.md) § Ideas shelf).
 
 ## 10. Change Log (doc vs implementation)
 - *(2026-09-28)* Drafted alongside the DX-foundation work; core solution already verified live (see POC-LOG § Shipped). Reflects `resource:_tenant` (ADR-11). To be reconciled as new features land.
+- *(2026-09-28)* **Reconciled:** the §7 walkthrough was **owner-validated end-to-end** via `DEMO.md` (one-command setup + Client A/B checks resolving). Narrative matches the shipped implementation; no divergence to note.

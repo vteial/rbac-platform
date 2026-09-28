@@ -12,7 +12,7 @@ It is an **authorization** service (OpenFGA), not a login service.
 **Stack:** OpenFGA (authz, one store per tenant) · PocketBase (console auth) ·
 SvelteKit console · PostgreSQL · Docker Compose.
 **Toolchain:** pnpm (via corepack) · Podman (`docker` routed to it; prefer Docker
-Compose v2 CLI). Details: [`docs/DEVELOPMENT_GUIDE.md`](docs/DEVELOPMENT_GUIDE.md).
+Compose v2 CLI). Details: [`docs/guides/DEVELOPMENT_GUIDE.md`](docs/guides/DEVELOPMENT_GUIDE.md).
 
 ## How we work — Mini-AIDLC
 Phase shape: **brainstorm → implement → verify → done.** Read the model at
@@ -21,7 +21,7 @@ Phase shape: **brainstorm → implement → verify → done.** Read the model at
 **Non-negotiables (never drop):**
 1. Follow the phase shape.
 2. **Human gate** — nothing is "done" until the owner explicitly approves. Stop and ask.
-3. **Record real decisions** in [`docs/DECISION_JOURNAL.md`](docs/DECISION_JOURNAL.md)
+3. **Record real decisions** in [`docs/design/DECISION_JOURNAL.md`](docs/design/DECISION_JOURNAL.md)
    (ADR format), indexed in [`POC-LOG.md`](POC-LOG.md) § Decisions. One source of truth —
    don't duplicate.
 
@@ -41,9 +41,11 @@ explicitly approves the POC for real development.
 | This guide (agent entry point) | `AGENTS.md` |
 | Project overview + how-we-work | [`README.md`](README.md) |
 | **Live state** (edit every loop) | [`POC-LOG.md`](POC-LOG.md) — § Now / Ideas / Shipped / Spec / Decisions |
-| Decisions of record (ADR) | [`docs/DECISION_JOURNAL.md`](docs/DECISION_JOURNAL.md) |
-| Local setup / run / deploy | [`docs/DEVELOPMENT_GUIDE.md`](docs/DEVELOPMENT_GUIDE.md) |
-| Demo walkthrough | [`docs/DEMO.md`](docs/DEMO.md) · [`docs/CLIENT_INTEGRATION.md`](docs/CLIENT_INTEGRATION.md) |
+| **Docs hub** (start here) | [`docs/README.md`](docs/README.md) |
+| The story (audience-facing) | [`docs/product/NARRATIVE.md`](docs/product/NARRATIVE.md) |
+| Decisions of record (ADR) | [`docs/design/DECISION_JOURNAL.md`](docs/design/DECISION_JOURNAL.md) |
+| Local setup / run / deploy | [`docs/guides/DEVELOPMENT_GUIDE.md`](docs/guides/DEVELOPMENT_GUIDE.md) |
+| Demo walkthrough | [`docs/guides/DEMO.md`](docs/guides/DEMO.md) · [`docs/design/CLIENT_INTEGRATION.md`](docs/design/CLIENT_INTEGRATION.md) |
 | Mini-AIDLC method (reference) | [`docs/reference/aidlc/`](docs/reference/aidlc/) |
 
 ## The loop (per unit of work)

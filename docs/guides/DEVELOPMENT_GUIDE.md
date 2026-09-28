@@ -1,8 +1,20 @@
 # Development Guide — rbac-platform
 
+[README](../../README.md) › [Docs](../README.md) › Guides › **Development Guide**
+
 Repo-specific setup, keyed to the standard developer machine (iMac M3 / Apple
 Silicon). If your environment differs, the tool choices below are the intent;
 adapt paths accordingly.
+
+## Contents
+1. [Prerequisites](#1-prerequisites)
+2. [Clone & identity](#2-clone--identity-multi-account-git) · [2a. Local DX commands (`just`)](#2a-local-dx-commands-just)
+3. [Containers (Podman)](#3-containers-podman)
+4. [Console (SvelteKit)](#4-console-sveltekit)
+5. [Seed & verify](#5-seed--verify)
+6. [Everyday commands](#6-everyday-commands-map-to-the-machine-aliases)
+7. [Deployment](#7-deployment)
+8. [Process — Mini-AIDLC](#8-process--mini-aidlc)
 
 - **Package manager:** pnpm (via corepack)
 - **Container engine:** Podman (`docker` routed to Podman)
@@ -68,7 +80,7 @@ just seed-local-demo   # demo state: Client A + Client B showcase
 just stop-local        # stop (or 'just stop-local wipe' to drop volumes)
 ```
 
-The raw equivalents are in the sections below. Spec: [`specs/poc-spec-local-dx.md`](specs/poc-spec-local-dx.md).
+The raw equivalents are in the sections below. Spec: [`specs/poc-spec-local-dx.md`](../specs/poc-spec-local-dx.md).
 
 ## 3. Containers (Podman)
 
@@ -145,7 +157,7 @@ pnpm verify:model
 
 First-run console login: create the PocketBase superuser at
 http://localhost:8090/_/, then add a user in the `users` collection — that's the
-console login. Full demo script: [DEMO.md](DEMO.md).
+console login. Full demo script: [DEMO.md](./DEMO.md).
 
 ---
 
@@ -162,7 +174,7 @@ console login. Full demo script: [DEMO.md](DEMO.md).
 
 ## 7. Deployment
 
-Direction (not yet wired — tracked in [`../POC-LOG.md`](../POC-LOG.md) § Ideas):
+Direction (not yet wired — tracked in [`POC-LOG.md`](../../POC-LOG.md) § Ideas):
 
 - **OpenFGA** + **PocketBase** → **Fly.io** (`fly launch` / `fly deploy`); Postgres via Fly Postgres or the OpenFGA datastore of choice.
 - **Console (SvelteKit)** → **Vercel** (`vercel deploy`). Uses adapter-node today; may switch to adapter-vercel at deploy time.
@@ -173,6 +185,6 @@ Direction (not yet wired — tracked in [`../POC-LOG.md`](../POC-LOG.md) § Idea
 ## 8. Process — Mini-AIDLC
 
 This repo follows Mini-AIDLC: `brainstorm → implement → verify → done`, with a
-human gate on "done." See [`reference/aidlc/KICKSTART.md`](reference/aidlc/KICKSTART.md)
-for the model and [`../POC-LOG.md`](../POC-LOG.md) for live state. Decisions of record
-live in [`DECISION_JOURNAL.md`](DECISION_JOURNAL.md). Agent entry point: [`../AGENTS.md`](../AGENTS.md).
+human gate on "done." See [`reference/aidlc/KICKSTART.md`](../reference/aidlc/KICKSTART.md)
+for the model and [`POC-LOG.md`](../../POC-LOG.md) for live state. Decisions of record
+live in [`DECISION_JOURNAL.md`](../design/DECISION_JOURNAL.md). Agent entry point: [`AGENTS.md`](../../AGENTS.md).

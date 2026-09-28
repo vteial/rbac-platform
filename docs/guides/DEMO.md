@@ -1,8 +1,18 @@
 # Client Demo Walkthrough
 
+[README](../../README.md) › [Docs](../README.md) › Guides › **Demo Walkthrough**
+
 > The **literal click-path** — the commands and clicks to run the demo. For the
 > *story* behind it (problem → solution → why it matters), see
-> [`NARRATIVE.md`](./NARRATIVE.md) § 7 (Walkthrough as Proof) points here.
+> [`NARRATIVE.md`](../product/NARRATIVE.md) § 7 (Walkthrough as Proof) points here.
+
+## Contents
+0. [Start the platform](#0-start-the-platform)
+1. [Create the console admin](#1-create-the-console-admin-one-time)
+2. [Seed the demo tenants](#2-seed-the-demo-tenants)
+3. [Run the console](#3-run-the-console)
+4. [The demo script](#4-the-demo-script-what-to-show-the-client)
+5. [Talking points](#5-talking-points)
 
 Goal: convince the client that this one self-hosted service can onboard any
 organization with **their own** role vocabulary and answer permission checks
@@ -93,7 +103,7 @@ Log in with the console user from step 1 (`demo@example.com` / `demo123456` by d
    - `divya` + `test` → ✅ ALLOWED (qa can test)
 5. **Add a role live** — create `viewer` with `read` on Client B, assign a user,
    check it. Shows self-service onboarding of arbitrary roles.
-6. **Show the API** — see [CLIENT_INTEGRATION.md](./CLIENT_INTEGRATION.md): the same
+6. **Show the API** — see [CLIENT_INTEGRATION.md](../design/CLIENT_INTEGRATION.md): the same
    check the console runs is a plain HTTP call the client's own system makes.
 
 ## 5. Talking points

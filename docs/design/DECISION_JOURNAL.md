@@ -1,9 +1,21 @@
 # Decision Journal — Multi-Tenant RBAC-as-a-Service
 
+[README](../../README.md) › [Docs](../README.md) › Design › **Decision Journal**
+
 > A structured record of the problem, the options weighed, and the decisions made
 > while designing a self-hosted, multi-tenant RBAC platform. Written to be
 > readable by an engineering manager: the executive summary is up top; the
 > detailed decision log (ADR-style) follows.
+
+## Contents
+1. [Executive Summary](#1-executive-summary)
+2. [Problem Statement](#2-problem-statement)
+3. [Requirements Derived](#3-requirements-derived)
+4. [Decision Log (ADR-style)](#4-decision-log-adr-style)
+5. [Final Architecture](#5-final-architecture)
+6. [What Was Built & Verified](#6-what-was-built--verified)
+7. [Open Items & Next Steps](#7-open-items--next-steps)
+8. [Decision Summary Table](#8-decision-summary-table-for-quick-reference)
 
 - **Status:** Design + starter implementation complete; live end-to-end run **done** on Podman (see §6)
 - **Date:** 2026-09-27
@@ -11,7 +23,7 @@
   options presented, and made every final call recorded below.
 - **Engineering support:** Surfaced and compared options, prototyped the starter, and
   documented rationale for the owner's review.
-- **Related artifacts:** [`ONE_PAGER.md`](./ONE_PAGER.md) (slide summary) · [`README.md`](../README.md) · [`docs/DEMO.md`](./DEMO.md) · [`docs/CLIENT_INTEGRATION.md`](./CLIENT_INTEGRATION.md)
+- **Related artifacts:** [`NARRATIVE.md`](../product/NARRATIVE.md) (the story) · [`ONE_PAGER.md`](../product/ONE_PAGER.md) (stub) · [`README.md`](../../README.md) · [`DEMO.md`](../guides/DEMO.md) · [`CLIENT_INTEGRATION.md`](./CLIENT_INTEGRATION.md)
 
 ---
 
@@ -411,10 +423,11 @@ model from a friendly role editor — clients never write the DSL.
   (`/health` ok, unauthenticated `/` → `/login`). This run **caught and fixed a real
   bug** — see **ADR-11** (`resource:*` object → `resource:_tenant`).
 
-**Remaining (interactive, owner-side):**
-- 🔎 Browser walkthrough of the console UI (login → tenants → roles → assign → the
-  "test a check" panel). All server-side plumbing behind it is confirmed working;
-  this is the visual confirmation.
+**Browser walkthrough — owner-validated** *(2026-09-28)*:
+- ✅ The console UI walkthrough (login → tenants → roles → assign → the "test a check"
+  panel) was **validated end-to-end by the owner** via `DEMO.md`, with one-command
+  setup (`just setup-console-user`) and the Client A/B checks resolving as expected.
+  No remaining interactive verification gap.
 
 ---
 

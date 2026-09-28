@@ -12,8 +12,8 @@ organizations, each with **their own custom role vocabulary**, and answer
 > own systems authenticate their users and then call this platform to check
 > permissions.
 
-**Design rationale:** see the [Decision Journal](docs/DECISION_JOURNAL.md) (full ADR-style
-record) and the [One-Page Summary](docs/ONE_PAGER.md) (slide overview).
+**Design rationale:** see the [Decision Journal](docs/design/DECISION_JOURNAL.md) (full ADR-style
+record) and the [Narrative](docs/product/NARRATIVE.md) (the problem→solution story). All docs are indexed in the **[docs hub](docs/README.md)**.
 
 ---
 
@@ -23,9 +23,9 @@ This POC follows the **Mini-AIDLC** process (AI-driven development at POC speed)
 
 - **Agent entry point:** [`AGENTS.md`](AGENTS.md) — how an AI agent (Kiro IDE, etc.) plugs into this repo and the process.
 - **The model:** [`docs/reference/aidlc/KICKSTART.md`](docs/reference/aidlc/KICKSTART.md) — phase shape (`brainstorm → implement → verify → done`), human gate (nothing is "done" until the owner approves), decisions recorded.
-- **Live state:** [`POC-LOG.md`](POC-LOG.md) — the single collapsed artifact (`§ Decisions / Now / Ideas / Shipped / Spec`). Decisions detail lives in [`docs/DECISION_JOURNAL.md`](docs/DECISION_JOURNAL.md); `POC-LOG.md § Decisions` indexes it.
+- **Live state:** [`POC-LOG.md`](POC-LOG.md) — the single collapsed artifact (`§ Decisions / Now / Ideas / Shipped / Spec`). Decisions detail lives in [`docs/design/DECISION_JOURNAL.md`](docs/design/DECISION_JOURNAL.md); `POC-LOG.md § Decisions` indexes it.
 - **Per-feature contracts:** template at [`docs/reference/aidlc/POC-SPEC.template.md`](docs/reference/aidlc/POC-SPEC.template.md); actual specs under [`docs/specs/`](docs/specs/).
-- **Local setup:** [`docs/DEVELOPMENT_GUIDE.md`](docs/DEVELOPMENT_GUIDE.md) — pnpm + Podman + ports + deploy direction, keyed to the standard dev machine.
+- **Local setup:** [`docs/guides/DEVELOPMENT_GUIDE.md`](docs/guides/DEVELOPMENT_GUIDE.md) — pnpm + Podman + ports + deploy direction, keyed to the standard dev machine.
 - **Graduation (POC → standard):** [`docs/reference/aidlc/MIGRATION.md`](docs/reference/aidlc/MIGRATION.md) + [`docs/reference/aidlc/skills/graduate/SKILL.md`](docs/reference/aidlc/skills/graduate/SKILL.md) — run `/graduate` **only** after the owner approves the POC for real development.
 
 ---
@@ -114,7 +114,7 @@ pnpm dev
 ```
 
 > Package manager is **pnpm** (via corepack). If you don't have it: `corepack enable`.
-> Container commands (`docker compose`) run on **Podman** on the standard dev machine — see [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md).
+> Container commands (`docker compose`) run on **Podman** on the standard dev machine — see [docs/guides/DEVELOPMENT_GUIDE.md](docs/guides/DEVELOPMENT_GUIDE.md).
 
 Or run everything (including the console) via Compose:
 
@@ -122,8 +122,8 @@ Or run everything (including the console) via Compose:
 docker compose up -d --build
 ```
 
-See **[docs/DEMO.md](docs/DEMO.md)** for the full client-facing demo walkthrough and
-**[docs/CLIENT_INTEGRATION.md](docs/CLIENT_INTEGRATION.md)** for how a client calls the
+See **[docs/guides/DEMO.md](docs/guides/DEMO.md)** for the full client-facing demo walkthrough and
+**[docs/design/CLIENT_INTEGRATION.md](docs/design/CLIENT_INTEGRATION.md)** for how a client calls the
 `check` API (modes a & b).
 
 ---
