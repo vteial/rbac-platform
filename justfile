@@ -1,6 +1,7 @@
 # Local developer-experience commands for this POC.
 #
 #   just              # list all commands
+#   just setup-local  # FIRST RUN: install safe tools + deps, guide Podman
 #   just env-doctor   # audit the machine (before anything runs)
 #   just start-local  # bring services up
 #   just validate-local
@@ -27,6 +28,11 @@ console_host   := "http://localhost:5173"
 # List all commands (default).
 default:
     @just --list
+
+# First-run onboarding: install safe tools + deps, guide Podman, then env-doctor.
+setup-local:
+    @PNPM_VERSION="{{pnpm_version}}" CONSOLE_DIR="{{console_dir}}" \
+        bash scripts/setup-local.sh
 
 # Audit the local machine: tools present + configured, ports free, .env present.
 env-doctor:

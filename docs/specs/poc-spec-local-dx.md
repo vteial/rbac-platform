@@ -23,6 +23,7 @@ Six commands:
 
 | Command | One-liner |
 | :--- | :--- |
+| `just setup-local` | **First run:** install safe tools + deps, guide Podman, then audit. |
 | `just env-doctor` | Audit the machine: are the **tools** present + configured? |
 | `just validate-local` | Probe the **running services**: are they up + answering? |
 | `just start-local` | Bring the backing services up (background) and wait for healthy. |
@@ -31,7 +32,8 @@ Six commands:
 | `just seed-local-demo` | Seed a **demo state** — the pre-baked Client A / Client B showcase. |
 
 ## Acceptance (how we'll know it works)  → seeds the EARS Definition of Done
-- [ ] `just --list` shows all six recipes with one-line help each.
+- [ ] `just --list` shows all recipes with one-line help each.
+- [ ] `just setup-local` is **conservative + idempotent**: auto-does the safe/reversible steps (install `just` via brew, `corepack enable` + pin pnpm, `pnpm install`, bootstrap `.env`); **detects-and-guides** for Podman + its VM (prints exact commands, installs/starts nothing); ends by running `env-doctor`. Safe to run twice.
 - [ ] `just env-doctor` reports ✅/⚠️/❌ per check (podman routed, machine running, pnpm at pinned version, node ≥22, ports free, `.env` present) and exits non-zero if any ❌.
 - [ ] `just start-local` copies `.env` from example if missing, brings up postgres+openfga+pocketbase, and returns only once all are healthy.
 - [ ] `just validate-local` probes OpenFGA `/healthz`=SERVING, PocketBase `/api/health`, Postgres `pg_isready`, and (if running) console `/health`; reports live status, exits non-zero on any failure.
@@ -49,8 +51,8 @@ Six commands:
 - **Scripts are idempotent-ish:** re-running `start-local` or a seed converges rather than errors (reuse store by name, ignore "already exists").
 
 ## Steps  → seeds `tasks.md`
-1. Add repo-root `justfile` with the variable header + six recipes (thin wrappers).
-2. Add `scripts/env-doctor.sh` and `scripts/validate-local.sh` (the two audit scripts).
+1. Add repo-root `justfile` with the variable header + recipes (thin wrappers).
+2. Add `scripts/env-doctor.sh`, `scripts/validate-local.sh`, `scripts/setup-local.sh`.
 3. `start-local` / `stop-local` recipes wrap `docker compose` with health-wait + `.env` bootstrap.
 4. Split `console/scripts/seed.ts` → shared core + `seed-local` (clean) + `seed-local-demo` (demo); add `seed:local` / `seed:local:demo` package scripts.
 5. Wire the seed recipes to export the host-facing URLs.
@@ -66,5 +68,5 @@ Six commands:
 ## Out of scope
 - Cross-platform support (Linux/Windows) — macOS + Podman only for now.
 - CI wiring / GitHub Actions — local only.
-- Auto-installing missing tools — `env-doctor` **reports** and suggests the fix, it does not install.
+- Auto-installing **heavy/stateful** tools — `setup-local` installs only safe, reversible things (`just`, pnpm-via-corepack, deps); Podman + its VM are **detect-and-guide** only. `env-doctor` never installs.
 - Production/deploy commands (Fly/Vercel) — separate future unit.

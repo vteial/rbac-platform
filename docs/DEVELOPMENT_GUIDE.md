@@ -58,6 +58,7 @@ The fastest path — self-diagnosing, one command each (`brew install just` if m
 
 ```bash
 just               # list all commands
+just setup-local   # FIRST RUN: install safe tools + deps, guide Podman, then audit
 just env-doctor    # audit the machine (tools, ports, .env) BEFORE anything runs
 just start-local   # bring backends up + wait for healthy
 just validate-local # probe running services
