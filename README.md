@@ -21,11 +21,12 @@ record) and the [One-Page Summary](docs/ONE_PAGER.md) (slide overview).
 
 This POC follows the **Mini-AIDLC** process (AI-driven development at POC speed).
 
-- **The model:** [`KICKSTART.md`](KICKSTART.md) — phase shape (`brainstorm → implement → verify → done`), human gate (nothing is "done" until the owner approves), decisions recorded.
+- **Agent entry point:** [`AGENTS.md`](AGENTS.md) — how an AI agent (Kiro IDE, etc.) plugs into this repo and the process.
+- **The model:** [`docs/reference/aidlc/KICKSTART.md`](docs/reference/aidlc/KICKSTART.md) — phase shape (`brainstorm → implement → verify → done`), human gate (nothing is "done" until the owner approves), decisions recorded.
 - **Live state:** [`POC-LOG.md`](POC-LOG.md) — the single collapsed artifact (`§ Decisions / Now / Ideas / Shipped / Spec`). Decisions detail lives in [`docs/DECISION_JOURNAL.md`](docs/DECISION_JOURNAL.md); `POC-LOG.md § Decisions` indexes it.
-- **Per-feature contracts:** template at [`POC-SPEC.template.md`](POC-SPEC.template.md); actual specs under [`docs/specs/`](docs/specs/).
+- **Per-feature contracts:** template at [`docs/reference/aidlc/POC-SPEC.template.md`](docs/reference/aidlc/POC-SPEC.template.md); actual specs under [`docs/specs/`](docs/specs/).
 - **Local setup:** [`docs/DEVELOPMENT_GUIDE.md`](docs/DEVELOPMENT_GUIDE.md) — pnpm + Podman + ports + deploy direction, keyed to the standard dev machine.
-- **Graduation (POC → standard):** [`MIGRATION.md`](MIGRATION.md) + [`skills/graduate/SKILL.md`](skills/graduate/SKILL.md) — run `/graduate` **only** after the owner approves the POC for real development.
+- **Graduation (POC → standard):** [`docs/reference/aidlc/MIGRATION.md`](docs/reference/aidlc/MIGRATION.md) + [`docs/reference/aidlc/skills/graduate/SKILL.md`](docs/reference/aidlc/skills/graduate/SKILL.md) — run `/graduate` **only** after the owner approves the POC for real development.
 
 ---
 

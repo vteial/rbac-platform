@@ -155,6 +155,6 @@ Direction (not yet wired — tracked in [`../POC-LOG.md`](../POC-LOG.md) § Idea
 ## 8. Process — Mini-AIDLC
 
 This repo follows Mini-AIDLC: `brainstorm → implement → verify → done`, with a
-human gate on "done." See [`../KICKSTART.md`](../KICKSTART.md) for the model and
-[`../POC-LOG.md`](../POC-LOG.md) for live state. Decisions of record live in
-[`DECISION_JOURNAL.md`](DECISION_JOURNAL.md).
+human gate on "done." See [`reference/aidlc/KICKSTART.md`](reference/aidlc/KICKSTART.md)
+for the model and [`../POC-LOG.md`](../POC-LOG.md) for live state. Decisions of record
+live in [`DECISION_JOURNAL.md`](DECISION_JOURNAL.md). Agent entry point: [`../AGENTS.md`](../AGENTS.md).

@@ -1,6 +1,6 @@
 # POC Log — rbac-platform
 
-> The **single, collapsed artifact** for this Mini-AIDLC POC. It folds the five standard artifacts (tracker · backlog · changelog · decision-journal · spec-pointer) into one file, **sectioned along the graduation seams** so `/graduate` can lift each section into its standard-model counterpart cleanly (see `MIGRATION.md`).
+> The **single, collapsed artifact** for this Mini-AIDLC POC. It folds the five standard artifacts (tracker · backlog · changelog · decision-journal · spec-pointer) into one file, **sectioned along the graduation seams** so `/graduate` can lift each section into its standard-model counterpart cleanly (see `docs/reference/aidlc/MIGRATION.md`).
 >
 > **Keep it terse.** POC speed. At graduation this file is *derived from*, then **frozen as historical reference** — not deleted.
 
@@ -10,7 +10,7 @@
 | **Stack** | OpenFGA (authz engine) · PocketBase (console auth) · SvelteKit (console) · PostgreSQL · Docker Compose |
 | **Started** | 2026-09-27 |
 | **Status** | 🔬 POC in progress · (→ ✅ Approved → run `/graduate`) |
-| **Model** | Mini AIDLC (`KICKSTART.md`) |
+| **Model** | Mini AIDLC (`docs/reference/aidlc/KICKSTART.md`) |
 
 ---
 
@@ -59,7 +59,7 @@ Process decisions (POC-level, not in the ADR journal):
 - *(2026-09-27)* **RBAC platform starter** — OpenFGA integration (create/list tenants, per-tenant model publish, assign, check), SvelteKit console (login → tenants → roles → assign → live test-check), PocketBase auth guard, Docker Compose (Postgres + OpenFGA + PocketBase + console), demo seed (Client A parent/child, Client B dev/qa/platform_engineer). Verified: console **builds clean**, `svelte-check` **0 errors**, model-builder emits valid OpenFGA schema-1.1 JSON, **offline decision logic 11/11 allow/deny cases pass** (`npm run verify:model`); ⚠️ live server round-trip NOT yet run · approved by owner.
 
 ## § Spec  → grows into full Kiro Spec(s) at graduation
-> Pointer to the current spec (if a unit of work warranted one). Small asks stay inline. Template: `POC-SPEC.template.md`; actual specs live under `docs/specs/`.
+> Pointer to the current spec (if a unit of work warranted one). Small asks stay inline. Template: `docs/reference/aidlc/POC-SPEC.template.md`; actual specs live under `docs/specs/`.
 
 - Current: none (inline asks so far).
 
