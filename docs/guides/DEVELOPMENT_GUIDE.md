@@ -145,19 +145,27 @@ Environment variables the console reads (see `.env.example`):
 
 ## 5. Seed & verify
 
+Prefer the `just` recipes (they set the host-facing OpenFGA URL for you):
+
 ```bash
-cd console
-
-# seed demo tenants (Client A: parent/child · Client B: dev/qa/platform_engineer)
-pnpm seed               # needs OpenFGA reachable at OPENFGA_API_URL
-
-# offline RBAC decision-logic check (no server needed) — 11/11 cases
-pnpm verify:model
+just seed-local        # CLEAN state — one tenant, its roles, no users (drive by hand)
+just seed-local-demo   # DEMO state — Client A (parent/child) + Client B (dev/qa/platform_engineer)
 ```
 
-First-run console login: create the PocketBase superuser at
-http://localhost:8090/_/, then add a user in the `users` collection — that's the
-console login. Full demo script: [DEMO.md](./DEMO.md).
+<details><summary>Raw (from <code>console/</code>)</summary>
+
+```bash
+cd console
+# needs OpenFGA reachable at OPENFGA_API_URL (host runs use http://localhost:8080)
+OPENFGA_API_URL=http://localhost:8080 pnpm seed:local       # clean
+OPENFGA_API_URL=http://localhost:8080 pnpm seed:local:demo  # demo
+pnpm verify:model                                           # offline logic check — 11/11, no server
+```
+</details>
+
+First-run console login: `just setup-console-user` creates the PocketBase superuser
+(`:8090/_/`) and the console user (`:5173`) with demo defaults. Full demo script:
+[DEMO.md](./DEMO.md).
 
 ---
 

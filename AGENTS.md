@@ -59,16 +59,19 @@ explicitly approves the POC for real development.
 8. Repeat.
 
 ## Current priority
-See `POC-LOG.md` § Now. The open item is **live end-to-end verification on Podman**:
+See `POC-LOG.md` § Now for the live state — always read it first. The **foundation is
+complete and owner-validated**: the platform runs end-to-end on Podman, and the local
+DX layer + narrative conventions are in place. Bring it up with one command each:
 ```
-cp .env.example .env
-docker compose up -d postgres openfga pocketbase   # routed to Podman
-docker compose ps                                   # wait until healthy
-cd console && pnpm install && pnpm seed
-pnpm dev            # http://localhost:5173  (PocketBase superuser at :8090/_/)
+just setup-local         # first run: install safe tools + deps, guide Podman, then audit
+just start-local         # up + wait for healthy
+just setup-console-user  # PB superuser + console login
+just seed-local-demo     # Client A + Client B demo data
+cd console && pnpm dev   # http://localhost:5173
 ```
-Confirm the console creates stores, roles publish, assignments work, and the
-"test a check" panel resolves (e.g. Client B: `esha` can `deploy` ✅, `chandra` cannot ⛔).
+Full command list: `just`. Demo walkthrough: `docs/guides/DEMO.md`. Next units come from
+`POC-LOG.md` § Ideas (e.g. API gateway, object-level permissions, role persistence).
 
 > **Caveat:** the OpenFGA healthcheck uses gRPC on `:8081`. If a stray process holds it,
-> free or remap the port. Ports table: `docs/DEVELOPMENT_GUIDE.md`.
+> free or remap the port. `just env-doctor` flags port conflicts. Ports table:
+> `docs/guides/DEVELOPMENT_GUIDE.md`.
