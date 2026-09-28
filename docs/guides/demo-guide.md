@@ -117,7 +117,8 @@ to populate `demo@example.com` / `demo123456`, then Sign in. (Or type them.)
 2. **Open Client A** → show roles are **Parent / Child**.
 3. **Open Client B** → show roles are **Dev / QA / Platform Engineer** — *completely
    different vocabulary, same platform, fully isolated*. This is the headline.
-4. **Test a check** (Client B):
+4. **Test a check** (Client B) — *this is the platform operator checking from inside the
+   console (proves the engine); the true client-integration proof is step 7, below*:
    - `esha` + `deploy` → ✅ ALLOWED (platform engineer can deploy)
    - `chandra` + `deploy` → ⛔ DENIED (dev cannot deploy)
    - `divya` + `test` → ✅ ALLOWED (qa can test)
@@ -125,6 +126,11 @@ to populate `demo@example.com` / `demo123456`, then Sign in. (Or type them.)
    check it. Shows self-service onboarding of arbitrary roles.
 6. **Show the API** — see [CLIENT_INTEGRATION.md](../design/CLIENT_INTEGRATION.md): the same
    check the console runs is a plain HTTP call the client's own system makes.
+7. **Client integration simulator** *(planned — [spec](../specs/poc-spec-client-simulator.md), backlog)* —
+   a **separate** bare-minimal client app (run as Client A or B) that makes the real
+   `check` call over the network and **shows the request/response inline**. This is the
+   moment that proves *"a foreign system consumes this as an API"* — the console test in
+   step 4 is operator-side and doesn't. Not built yet; this step will land with that unit.
 
 ## 5. Talking points
 

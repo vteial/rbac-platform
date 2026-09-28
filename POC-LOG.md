@@ -53,6 +53,7 @@ Process decisions (POC-level, not in the ADR journal):
 > Things for later — not committed. The shelf.
 
 - Thin API gateway in front of OpenFGA — map API key → store id (clients never see raw store ids), rate-limiting, audit logging.
+- **Client integration simulator** — a separate bare-minimal app (one-app-two-configs, Client A/B) that consumes the `check` API for real over the network and shows the request/response inline — the true proof of the POC (vs the console's operator-side inline test). Spec drafted: [`docs/specs/poc-spec-client-simulator.md`](docs/specs/poc-spec-client-simulator.md). Designed to later repoint at the API gateway (below).
 - Object-level / per-resource permissions (`resource:<id>`) — enabled by ADR-1 with no migration; build when a client needs it.
 - Move role-definition persistence from the local JSON store to PocketBase/Postgres for production.
 - Enable OpenFGA `preshared` key auth + TLS before any non-local exposure.
@@ -77,6 +78,7 @@ Process decisions (POC-level, not in the ADR journal):
 
 - [`docs/specs/poc-spec-local-dx.md`](docs/specs/poc-spec-local-dx.md) — Local DX command layer (`just`). Status: verified.
 - [`docs/specs/poc-spec-console-ui.md`](docs/specs/poc-spec-console-ui.md) — Console minimum UI standard. Status: verified.
+- [`docs/specs/poc-spec-client-simulator.md`](docs/specs/poc-spec-client-simulator.md) — Client integration simulator. Status: **backlog** (drafted, not scheduled).
 
 ---
 
