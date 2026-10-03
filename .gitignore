@@ -28,8 +28,9 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
-# Local-only scratch (symlink to ../worknotes, outside the repo)
-_worknotes
+# Local-only: symlink to ~/my-works (personal portfolio dashboard; triggers the
+# cross-repo generator via an in-repo relative path, keeping this repo self-contained)
+_my_works
 
 # Editor
 .vscode/
